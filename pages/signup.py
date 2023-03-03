@@ -60,6 +60,7 @@ def Signup(page: ft.page):
 
     SignupPage = ft.View(
         "/signup",
+        bgcolor=ft.colors.DEEP_PURPLE_100,
         controls=[
             ft.Column(
                 [
