@@ -1,8 +1,15 @@
 import flet as ft
 from user_controls.app_bar import Navbar
-
+from localStorage.clientStorage import getUserData
 
 def Home(page: ft.page):
+    
+    def getData(e):
+        try:
+            print(getUserData(page))
+        except Exception as e: print(e)
+
+        
 
     homePage = ft.View(
         "/home",
@@ -99,7 +106,9 @@ def Home(page: ft.page):
 
                                                 ),
                                                 ft.Row(
-                                                    [ft.TextButton("Check"),],
+                                                    [ft.TextButton("Check", on_click= getData,
+                                                                   ),
+                                                     ],
                                                     alignment=ft.MainAxisAlignment.END,
                                                 ),
                                             ]

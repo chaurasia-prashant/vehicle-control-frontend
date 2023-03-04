@@ -1,7 +1,8 @@
 import flet as ft
-
 import requests
+import json
 
+from localStorage.clientStorage import setUserData,getUserData
 
 def Login(page: ft.page):
     empId = ft.TextField(
@@ -16,6 +17,7 @@ def Login(page: ft.page):
         color=ft.colors.WHITE,
     )
 
+    
     def login_user(e):
         data = {
             "empID": empId.value,
@@ -26,15 +28,17 @@ def Login(page: ft.page):
         print(data)
         try:
             res = requests.post("http://127.0.0.1:8000/", json=data)
-            print(res.text)
+            resData = json.loads(res.content)
+            setUserData(page,resData)
+            
+            
 
             if res.status_code == 200:
                 print("successfully login")
                 page.go("/home")
             else:
                 print("you are not a registered user")
-        except:
-            print("error")
+        except Exception as e: print(e)
 
     loginPage = ft.View(
         "/" ,
