@@ -106,7 +106,7 @@ def Home(page: ft.page):
 
                                                 ),
                                                 ft.Row(
-                                                    [ft.TextButton("Check", on_click= getData,
+                                                    [ft.TextButton("Check", on_click= lambda _ : page.go("/requestHistory"),
                                                                    ),
                                                      ],
                                                     alignment=ft.MainAxisAlignment.END,

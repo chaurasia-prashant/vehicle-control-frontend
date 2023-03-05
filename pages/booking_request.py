@@ -44,7 +44,7 @@ def BookingRequest(page: ft.page):
                         col={"sm": 6, "xl": 6},
                         margin = 30,
                         padding =30,
-                        bgcolor=ft.colors.BLACK45,
+                        bgcolor=ft.colors.BLACK87,
                         border_radius=10,
                         content=ft.Column(
 
@@ -58,6 +58,8 @@ def BookingRequest(page: ft.page):
                                     "Send Travel Request",
                                     # height= 20,
                                     width = .4*page.width -30,
+                                    bgcolor= ft.colors.WHITE,
+                                    color= ft.colors.BLUE
                                 )
                             ]
                         ),
