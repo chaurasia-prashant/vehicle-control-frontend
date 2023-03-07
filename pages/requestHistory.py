@@ -1,18 +1,28 @@
 import flet as ft
 from user_controls.app_bar import Navbar
 
+# View to access all request history of a user.
+# An Icon in history card to represent a user rquest is approved, pending or canceled.
+# Green for accepted.
+# Red for rejected.
+# Yellow for pending.
+
 
 def RequestHistory(page: ft.page):
 
+    # history card that show how its UI looks like.
     historyCard = ft.Card(
         content=ft.Container(
 
             content=ft.Column(
                 [
                     ft.ListTile(
+                        # This Icon represent a user rquest is approved, pending or canceled.
+                        # Green for accepted.
+                        # Red for rejected.
+                        # Yellow for pending.
                         leading=ft.Icon(
                             ft.icons.CHECK_CIRCLE,
-                            #ft.icons.CIRCLE,
                             size=50,
                             color=ft.colors.GREEN,
                         ),
@@ -21,37 +31,37 @@ def RequestHistory(page: ft.page):
                         subtitle=ft.ListTile(
                             title=ft.Row([
                                 ft.Text("Origin",
-                                        size = 12),
+                                        size=12),
                                 ft.Text("To",
-                                        size = 12),
+                                        size=12),
                                 ft.Text("Destination",
-                                        size = 12)
+                                        size=12)
                             ],
-                                alignment= ft.MainAxisAlignment.START,         
-                                         ),
-                            subtitle= ft.Row([
+                                alignment=ft.MainAxisAlignment.START,
+                            ),
+                            subtitle=ft.Row([
                                 ft.Text("Start",
-                                        size = 11),
+                                        size=11),
                                 ft.Text("To",
-                                        size = 11),
+                                        size=11),
                                 ft.Text("End",
-                                        size = 11)
+                                        size=11)
                             ],
-                                alignment= ft.MainAxisAlignment.START,
-                                             )
+                                alignment=ft.MainAxisAlignment.START,
+                            )
                         )
                     ),
                     ft.Row(
                         [ft.Text(
                             "Date : ",
-                            
+
                         ),
-                         ft.Text(
+                            ft.Text(
                             "DD-MM-YYYY",
-                            
+
                         ),
-                         ft.Container(width = 20)
-                         ],
+                            ft.Container(width=20)
+                        ],
                         alignment=ft.MainAxisAlignment.END,
                     ),
                 ]
@@ -65,8 +75,6 @@ def RequestHistory(page: ft.page):
         "/requestHistory",
         bgcolor=ft.colors.DEEP_PURPLE_100,
         appbar=Navbar(page, ft),
-        # vertical_alignment = ft.MainAxisAlignment.CENTER,
-        # horizontal_alignment = ft.CrossAxisAlignment.CENTER,
 
         controls=[
             ft.ResponsiveRow(

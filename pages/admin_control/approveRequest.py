@@ -1,19 +1,29 @@
 import flet as ft
 from user_controls.app_bar import Navbar
 
+# View for approving a user's travel request
+# this page is controlled only by admin
+# To approve a request admin have to fill vehicle details and remarks.
+
 
 def ApproveRequest(page: ft.page):
-    
+
+    # function to enable approving form for admin.
     def showFinalApprovePopUp(e):
         approveScreen.visible = None
         approveScreen.visible = True
         approveScreen.update()
+        page.update()
+    # function to disable approving form.
+
     def closeFinalApprovePopUp(e):
         approveScreen.visible = None
         approveScreen.visible = False
         approveScreen.update()
+        page.update()
 
-    approveCard = ft.Card(
+    # Approve request's card.
+    approveRequestsCard = ft.Card(
         content=ft.Container(
             content=ft.Column(
                 [
@@ -77,45 +87,45 @@ def ApproveRequest(page: ft.page):
         )
     )
 
+    # Approve form card for admin
     approveScreen = ft.Container(
-        alignment= ft.alignment.center,
-        content = ft.Container(
-        visible=True,
-        # height=.5*page.height,
-        width=.3*page.width,
-        bgcolor=ft.colors.BLACK87,
-        padding=15,
-        border_radius=10,
-        content=ft.Column([
-            ft.TextField(
-                label="Vehicle Number",
-                color=ft.colors.WHITE,
-                height=50,
-            ),
-            ft.TextField(
-                label="Remark",
-                color=ft.colors.WHITE,
-                multiline= True,
-                max_lines= 3,
-                max_length= 100,
-                # height=50,
-            ),
-            # ft.Container(height= 15),
-            ft.Row([
-                ft.ElevatedButton(
-                    "Close",
-                    bgcolor= ft.colors.RED_900,
-                    on_click=closeFinalApprovePopUp
-                ),   ft.ElevatedButton(
-                    "Final Approve",
-                    bgcolor= ft.colors.GREEN_900
+        visible=False,
+        alignment=ft.alignment.center,
+        content=ft.Container(
+            width=.3*page.width,
+            bgcolor=ft.colors.BLACK87,
+            padding=15,
+            border_radius=10,
+            content=ft.Column([
+                ft.Text("Booking Number"),
+                ft.Dropdown(
+                    label="Vehicle Number",
+                    color=ft.colors.WHITE,
+                    height=50,
+                    border_color=ft.colors.BLUE,
                 ),
-            ]),
+                ft.TextField(
+                    label="Remark",
+                    color=ft.colors.WHITE,
+                    multiline=True,
+                    max_lines=3,
+                    max_length=100,
+                    border_color=ft.colors.BLUE,
+                ),
+                ft.Row([
+                    ft.ElevatedButton(
+                        "Close",
+                        bgcolor=ft.colors.RED_900,
+                        on_click=closeFinalApprovePopUp
+                    ),   ft.ElevatedButton(
+                        "Final Approve",
+                        bgcolor=ft.colors.GREEN_900
+                    ),
+                ]),
 
-        ],
-            # alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+            ],
+            )
         )
-    )
     )
 
     approveMainScreen = ft.ResponsiveRow(
@@ -126,7 +136,7 @@ def ApproveRequest(page: ft.page):
                 content=ft.ListView(
                     controls=[
 
-                        approveCard,
+                        approveRequestsCard,
 
                     ]
                 ),
@@ -168,9 +178,6 @@ def ApproveRequest(page: ft.page):
         "/approveRequest",
         bgcolor=ft.colors.DEEP_PURPLE_100,
         appbar=Navbar(page, ft),
-        # vertical_alignment = ft.MainAxisAlignment.CENTER,
-        # horizontal_alignment = ft.CrossAxisAlignment.CENTER,
-
         controls=[
             ft.Stack(
                 controls=[

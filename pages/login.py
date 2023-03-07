@@ -1,17 +1,23 @@
 import flet as ft
 import requests
+# import json to get data return from api
 import json
 
-from localStorage.clientStorage import setUserData, getUserData
+# import for local data storage of user
+from localStorage.clientStorage import setUserData
+
+# function for login view
 
 
 def Login(page: ft.page):
+
+    # empId field for login
     empId = ft.TextField(
         label="Employee ID",
         color=ft.colors.WHITE,
         height=50,
     )
-
+    # password field
     password = ft.TextField(
         label="Password",
         password=True,
@@ -19,6 +25,8 @@ def Login(page: ft.page):
         color=ft.colors.WHITE,
         height=50,
     )
+
+    # function for handeling user login event.
 
     def login_user(e):
         data = {
@@ -41,37 +49,6 @@ def Login(page: ft.page):
         except Exception as e:
             print(e)
 
-    # def checkSize(e):
-    #     print(page.width)
-    #     if page.width >= 1020:
-    #         # credentialsContainer.width = .4*page.width
-    #         # credentialsContainer.update()
-    #         img.visible = True
-    #         img.disabled = True
-    #         img.update()
-    #     elif 1020 > page.width > 500:
-    #         # credentialsContainer.width = .4*page.width
-    #         # credentialsContainer.update()
-    #         img.visible = True
-    #         img.disabled = True
-    #         img.update()
-    #     else:
-    #         # credentialsContainer.width = .9*page.width
-    #         # credentialsContainer.update()
-    #         img.visible = False
-    #         img.disabled = False
-    #         img.update()
-
-    # page.on_resize = checkSize
-
-    # img = ft.Image(
-    #     src=f"/car.png",
-    #     width=300,
-    #     height=300,
-    #     fit=ft.ImageFit.CONTAIN,
-    #     gapless_playback=True
-    # )
-
     loginPage = ft.View(
         "/",
         bgcolor=ft.colors.DEEP_PURPLE_100,
@@ -86,7 +63,7 @@ def Login(page: ft.page):
                         color=ft.colors.BLUE_600,
 
                     ),
-                    ft.Container(height= 10),
+                    ft.Container(height=10),
                     ft.ResponsiveRow([
                         ft.Container(
                             content=ft.Image(
@@ -99,7 +76,7 @@ def Login(page: ft.page):
 
                         ),
                         ft.Container(
-                            col = {"sm": 8,"md": 8, "xl": 6 },
+                            col={"sm": 8, "md": 8, "xl": 6},
                             width=.4*page.width,
                             # alignment=ft.alignment.center,
                             content=ft.Column(
@@ -122,12 +99,13 @@ def Login(page: ft.page):
                                     ),
 
                                     ft.Container(
-                                        col = {"sm": 8,"md": 8, "xl": 6 },
+                                        col={"sm": 8, "md": 8, "xl": 6},
                                         margin=10,
                                         content=ft.Row(
                                             [
                                                 ft.Container(
                                                     width=100,
+                                                    # If not registered redirect to signup.
                                                     content=ft.ElevatedButton(
                                                         "Signup",
                                                         on_click=lambda _:page.go(
@@ -140,6 +118,7 @@ def Login(page: ft.page):
                                                 ft.Container(
 
                                                     width=100,
+                                                    # Trigger user login event
                                                     content=ft.ElevatedButton(
                                                         "Login",
                                                         on_click=login_user),

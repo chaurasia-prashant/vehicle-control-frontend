@@ -1,21 +1,27 @@
 import flet as ft
 from user_controls.app_bar import Navbar
 
+# Vehicle Detail Page
+
 
 def VehicleDetail(page: ft.page):
+
+    # Function to show status and booking's of a vehicle
     def showvehicleScreen(e):
-        if page.width < 576:   
+        if page.width < 576:
             vehicalBookingScreen.visible = None
             vehicalBookingScreen.visible = True
             vehicalBookingScreen.update()
         page.update()
-            
-        
-    def closevehicleScreen(e) :
-           vehicalBookingScreen.visible = False,
-           vehicalBookingScreen.update()
-        #    page.update()
 
+    # hide vehicle booking history
+    def closevehicleScreen(e):
+        print(vehicalBookingScreen.visible)
+        vehicalBookingScreen.visible = None
+        vehicalBookingScreen.visible = False,
+        vehicalBookingScreen.update()
+
+    # Vehicle card to show vehicles registered.
     vehicleDetail = ft.Card(
         content=ft.Container(
             content=ft.Row([
@@ -57,6 +63,7 @@ def VehicleDetail(page: ft.page):
         )
     )
 
+    # Card to show vehicle booking history.
     vehicleBookHistory = ft.Container(
         bgcolor=ft.colors.PURPLE_900,
         border_radius=10,
@@ -104,81 +111,79 @@ def VehicleDetail(page: ft.page):
         padding=20,
     )
 
-
-    
+    # vehicle booking's screen that display it's history cards in a list view
     vehicalBookingScreen = ft.Container(
-        visible= False,
-        height= .8*page.height,
-        width= .6*page.width,
-        # left= .1*page.width,
-        # top= .1*page.height,
-        bgcolor= ft.colors.BLACK87,
-        padding= 15,
-        border_radius= 10,
-        content= ft.Column([
+        visible=False,
+        height=.8*page.height,
+        width=.8*page.width,
+        bgcolor=ft.colors.BLACK87,
+        padding=15,
+        border_radius=10,
+        content=ft.Column([
             ft.Container(
-                height = .65*page.height,
-                content = ft.ListView (
-                    spacing = 3,
-                controls= [
-                    vehicleBookHistory,
-                ]
-            ),),
+                height=.65*page.height,
+                content=ft.ListView(
+                    spacing=3,
+                    controls=[
+                        vehicleBookHistory,
+                    ]
+                ),),
             # ft.Container(height= 15),
             ft.ElevatedButton(
                 "Close",
-                on_click= closevehicleScreen
-                
+                on_click=closevehicleScreen
+
             )
         ],
-        alignment= ft.MainAxisAlignment.SPACE_BETWEEN
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN
         )
     )
-    
-    
+
+    # vehicle's screen to display all vehicle registered.
     vehicleScreeen = ft.ResponsiveRow(
-                controls=[
+        controls=[
+            ft.Container(
+                col={"sm": 6, "xl": 3},
+                height=page.height,
+                content=ft.ListView(
+                    controls=[
+                        vehicleDetail,
+
+                    ]
+                ),
+            ),
+
+            ft.Container(
+                margin=30,
+                col={"xs": 0, "sm": 5, "xl": 4},
+                content=ft.Column([
                     ft.Container(
-                        col={"sm": 6, "xl": 3},
-                        height=page.height,
-                        content=ft.ListView(
-                            controls=[
-                                vehicleDetail,
-                                
-                            ]
+                        height=120,
+                        content=ft.Text(
+                            "Vehicle Booking History",
+                            size=40,
+                            color=ft.colors.BLUE_800
                         ),
+                        alignment=ft.alignment.center,
                     ),
 
                     ft.Container(
-                        margin=30,
-                        col={"xs": 0, "sm": 5, "xl": 4},
-                        content=ft.Column([
-                            ft.Container(
-                                height=120,
-                                content=ft.Text(
-                                    "Vehicle Booking History",
-                                    size=40,
-                                    color=ft.colors.BLUE_800
-                                ),
-                                alignment=ft.alignment.center,
-                            ),
-
-                            ft.Container(
-                                height=500,
-                                col={"xs": 0, "sm": 4, "xl": 2},
-                                content=ft.ListView(
-                                    controls=[vehicleBookHistory]
-                                )
-                            )
-                        ])
+                        height=500,
+                        col={"xs": 0, "sm": 4, "xl": 2},
+                        content=ft.ListView(
+                            controls=[vehicleBookHistory]
+                        )
                     )
-
-
-                ],
-                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                vertical_alignment=ft.CrossAxisAlignment.START,
+                ])
             )
 
+
+        ],
+        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        vertical_alignment=ft.CrossAxisAlignment.START,
+    )
+
+    # main view for to contain all cards and screen.
     vehicleDetail = ft.View(
         "/vehicleDetail",
         bgcolor=ft.colors.DEEP_PURPLE_100,
@@ -189,7 +194,7 @@ def VehicleDetail(page: ft.page):
                 controls=[
                     vehicleScreeen,
                     vehicalBookingScreen
-                    ]
+                ]
             )
         ]
     )
