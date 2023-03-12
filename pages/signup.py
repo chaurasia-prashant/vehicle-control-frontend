@@ -1,6 +1,10 @@
+import json
 import flet as ft
 # Using request for getting and sending data to API.
 import requests
+import secrets
+
+from localStorage.clientStorage import setUserData
 
 # Function for signUP page that return a view.
 
@@ -29,7 +33,7 @@ def Signup(page: ft.page):
         expand=True
     )
     # employee ID field
-    empID = ft.TextField(
+    empId = ft.TextField(
         label="Employee ID",
         color=ft.colors.WHITE,
         expand=True
@@ -53,23 +57,22 @@ def Signup(page: ft.page):
         data = {
             "username": username.value,
             "email": email.value,
-            "empID": empID.value,
+            "empId": empId.value,
             "department": department.value,
             "phoneNumber": phoneNumber.value,
-            "password": password.value
+            "password": password.value,
+            "uid" : secrets.token_urlsafe(16)
         }
         # Using try and catch to handle errors.
         try:
-            res = requests.post("http://127.0.0.1:8000/user/signup", json=data)
-            print(res.text)
-            if res.status_code == 200:
-                print("successfully login")
-                page.go("/login")
-            else:
-                print("you are not a registered user")
+            res = requests.post("http://127.0.0.1:8000/userSignup/", json=data)
+            if res.status_code == 200 and res.text != "404":
+                setUserData(page, data)
+                page.client_storage.set("isAuthenticated", True)
+                page.go("/home")
         except:
             print("error")
-    # Signup vies for the site.
+    # Signup views for the site.
     SignupPage = ft.View(
         "/signup",
         bgcolor=ft.colors.DEEP_PURPLE_100,
@@ -92,7 +95,7 @@ def Signup(page: ft.page):
                                         username,
                                         email,]),
                                     ft.Row([
-                                        empID,
+                                        empId,
                                         department,]),
                                     ft.Row([
                                         phoneNumber,

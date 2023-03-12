@@ -1,4 +1,8 @@
+import datetime
+import secrets
 import flet as ft
+import requests
+from localStorage.clientStorage import getUserData
 from user_controls.app_bar import Navbar
 
 # Booking request view
@@ -33,6 +37,38 @@ def BookingRequest(page: ft.page):
         height=50,
 
     )
+    
+    
+    
+    def book_request(e):
+        userData = getUserData(page)
+        data = {
+            "bookingNumber": secrets.token_urlsafe(8),
+            "empId": userData["empId"], 
+            "empUsername": userData["username"],
+            "userDepartment": userData["department"],
+            "tripDate": str(datetime.datetime.now()),
+            "startLocation": startLocation.value,
+            "destination": destination.value,
+            "startTime": startTime.value,
+            "endTime": endTime.value,
+            "vehicleAlloted": None,
+            "vehicleNumber": None,
+            "tripStatus": False,
+            "tripCompleted": False,
+            "tripCanceled": False,
+            "reason": None,
+            "remark": None,
+        }
+        # Using try and catch to handle errors.
+        try:
+            res = requests.post("http://127.0.0.1:8000/vehicleBooking/", json=data)
+            if res.status_code == 200 and res.text != "404":
+                page.go("/home")
+            else:
+                print("Failed to send request")
+        except Exception as e:
+            print(e)
 
     bookingRequest = ft.View(
         "/bookingRequest",
@@ -61,7 +97,9 @@ def BookingRequest(page: ft.page):
                                     # height= 20,
                                     width=.4*page.width - 30,
                                     bgcolor=ft.colors.WHITE,
-                                    color=ft.colors.BLUE
+                                    color=ft.colors.BLUE,
+                                    on_click=book_request,
+                                    
                                 )
                             ]
                         ),

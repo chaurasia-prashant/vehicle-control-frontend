@@ -7,13 +7,16 @@ import flet as ft
 
 
 def setUserData(page, userData):
-    pref = page.client_storage
-    pref.set("username", userData["username"])
-    pref.set("email", userData["email"])
-    pref.set("empID", userData["empID"])
-    pref.set("department", userData["department"])
-    pref.set("phoneNumber", userData["phoneNumber"])
-
+    try:
+        pref = page.client_storage
+        pref.set("username", userData["username"])
+        pref.set("email", userData["email"])
+        pref.set("empId", userData["empId"])
+        pref.set("department", userData["department"])
+        pref.set("phoneNumber", userData["phoneNumber"])
+        pref.set("uid", userData["uid"])
+    except Exception as e:
+        print(e)
 
 # function to get user data that are stored in local storage.
 # Can be access from any page of this website.
@@ -24,7 +27,8 @@ def getUserData(page):
     data = {}
     data["username"] = pref.get("username")
     data["email"] = pref.get("email")
-    data["empID"] = pref.get("empID")
+    data["empId"] = pref.get("empId")
     data["department"] = pref.get("department")
     data["phoneNumber"] = pref.get("phoneNumber")
+    data["uid"] = pref.get("uid")
     return data

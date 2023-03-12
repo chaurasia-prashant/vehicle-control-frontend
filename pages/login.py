@@ -8,8 +8,9 @@ from localStorage.clientStorage import setUserData
 
 # function for login view
 
-
 def Login(page: ft.page):
+
+    
 
     # empId field for login
     empId = ft.TextField(
@@ -27,22 +28,21 @@ def Login(page: ft.page):
     )
 
     # function for handeling user login event.
+    
 
     def login_user(e):
         data = {
-            "empID": empId.value,
+            "empId": empId.value,
             "password": password.value
 
         }
-        page.go("/home")
-        print(data)
+        # print(data)
         try:
-            res = requests.post("http://127.0.0.1:8000/", json=data)
-            resData = json.loads(res.content)
-            setUserData(page, resData)
-
-            if res.status_code == 200:
-                print("successfully login")
+            res = requests.post("http://127.0.0.1:8000/userLogin", json=data)
+            if res.status_code == 200 and res.text != "404":
+                resData = json.loads(res.content)
+                setUserData(page, resData)
+                page.client_storage.set("isAuthenticated", True)
                 page.go("/home")
             else:
                 print("you are not a registered user")

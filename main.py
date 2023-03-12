@@ -26,7 +26,11 @@ def main(page: Page):
     page.on_route_change = route_change
     page.on_view_pop = view_pop
     # rroute to the first page on startup
-    page.go("/")
+    isAuth = page.client_storage.get("isAuthenticated")
+    if isAuth:
+        page.go("/home")
+    else:
+        page.go("/")
 
 
 # refrencing app to run the main file.

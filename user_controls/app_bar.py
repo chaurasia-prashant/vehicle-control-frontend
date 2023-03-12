@@ -6,6 +6,10 @@ import flet as ft
 
 def Navbar(page, ft=ft):
 
+    def logOut(e):
+        page.client_storage.set("isAuthenticated", False)
+        page.go("/")
+
     NavBar = ft.AppBar(
         leading=ft.Icon(ft.icons.TAG_FACES_ROUNDED),
         leading_width=40,
@@ -15,7 +19,7 @@ def Navbar(page, ft=ft):
         actions=[
             ft.IconButton(ft.icons.HOME, on_click=lambda _: page.go('/home')),
             ft.IconButton(ft.icons.LOGOUT_ROUNDED,
-                          on_click=lambda _: page.go('/')),
+                          on_click=logOut),
 
 
         ]
