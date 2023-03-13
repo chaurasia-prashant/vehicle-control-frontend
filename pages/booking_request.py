@@ -1,5 +1,7 @@
-import datetime
+from datetime import datetime, date
+from json import dumps
 import secrets
+import time
 import flet as ft
 import requests
 from localStorage.clientStorage import getUserData
@@ -38,16 +40,20 @@ def BookingRequest(page: ft.page):
 
     )
     
+    errorText = ft.Text("All fields are menedatory",
+                        size=14,
+                        color= ft.colors.RED_400,
+                        visible=False)
     
     
     def book_request(e):
         userData = getUserData(page)
         data = {
-            "bookingNumber": secrets.token_urlsafe(8),
+            "bookingNumber": secrets.token_urlsafe(6),
             "empId": userData["empId"], 
             "empUsername": userData["username"],
             "userDepartment": userData["department"],
-            "tripDate": str(datetime.datetime.now()),
+            "tripDate": str(datetime.now()),
             "startLocation": startLocation.value,
             "destination": destination.value,
             "startTime": startTime.value,
@@ -61,14 +67,25 @@ def BookingRequest(page: ft.page):
             "remark": None,
         }
         # Using try and catch to handle errors.
-        try:
-            res = requests.post("http://127.0.0.1:8000/vehicleBooking/", json=data)
-            if res.status_code == 200 and res.text != "404":
-                page.go("/home")
-            else:
-                print("Failed to send request")
-        except Exception as e:
-            print(e)
+        if startLocation.value  and destination.value and startTime.value and endTime.value != "":
+            try:
+                
+                res = requests.post("http://127.0.0.1:8000/vehicleBooking/", json=data)
+                if res.status_code == 200 and res.text != "404":
+                    errorText.value = "Request Send Successfuly"
+                    errorText.color = ft.colors.GREEN_400
+                    errorText.visible =True
+                    errorText.update()
+                    time.sleep(1)
+                    page.go("/home")
+            except:
+                errorText.value = "Something Went Wrong\nUnable to procced your request\n"
+                errorText.visible =True
+                errorText.update()
+        else:
+            errorText.visible =True
+            errorText.update()
+            
 
     bookingRequest = ft.View(
         "/bookingRequest",
@@ -87,6 +104,7 @@ def BookingRequest(page: ft.page):
                         content=ft.Column(
 
                             [
+                                errorText,
                                 startLocation,
                                 destination,
                                 startTime,

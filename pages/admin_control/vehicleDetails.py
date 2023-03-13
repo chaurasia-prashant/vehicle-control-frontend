@@ -16,7 +16,7 @@ def VehicleDetail(page: ft.page):
 
     # hide vehicle booking history
     def closevehicleScreen(e):
-        print(vehicalBookingScreen.visible)
+
         vehicalBookingScreen.visible = None
         vehicalBookingScreen.visible = False,
         vehicalBookingScreen.update()

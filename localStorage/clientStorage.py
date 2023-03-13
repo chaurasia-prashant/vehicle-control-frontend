@@ -15,8 +15,8 @@ def setUserData(page, userData):
         pref.set("department", userData["department"])
         pref.set("phoneNumber", userData["phoneNumber"])
         pref.set("uid", userData["uid"])
-    except Exception as e:
-        print(e)
+    except:
+        return "error"
 
 # function to get user data that are stored in local storage.
 # Can be access from any page of this website.
