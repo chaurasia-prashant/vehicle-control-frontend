@@ -126,6 +126,7 @@ def RequestHistory(page: ft.page):
                     
                     ft.Container(
                         col={"sm": 6, "xl": 4},
+                        height = .9*page.height,
                         content=reqData,
                     ),
 
@@ -135,7 +136,7 @@ def RequestHistory(page: ft.page):
                             ft.Container(
                                 height=120,
                                 content=ft.Text(
-                                    "Welcome to\nBook My Trip",
+                                    "My Request\nHistory",
                                     size=40,
                                     color=ft.colors.BLUE_800
                                 ),

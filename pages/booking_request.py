@@ -6,6 +6,7 @@ import flet as ft
 import requests
 from localStorage.clientStorage import getUserData
 from user_controls.app_bar import Navbar
+from user_controls.urls import urls
 
 # Booking request view
 # from this page a user can send a travel request to admin
@@ -95,7 +96,9 @@ def BookingRequest(page: ft.page):
                     "reason": None,
                     "remark": None,
                 }
-                res = requests.post("http://127.0.0.1:8000/vehicleBooking/", json=data)
+                url =urls()
+                url =url["vehicleBooking"]
+                res = requests.post(f"{url}", json=data)
                 if res.status_code == 200 and res.text != "404":
                     errorText.value = "Request Send Successfuly"
                     errorText.color = ft.colors.GREEN_400

@@ -3,6 +3,7 @@ import flet as ft
 import requests
 from database.getFromDb import getAllBookkingRequest
 from user_controls.app_bar import Navbar
+from user_controls.urls import urls
 
 # View for approving a user's travel request
 # this page is controlled only by admin
@@ -72,11 +73,14 @@ def ApproveRequest(page: ft.page):
         }
         if vehicleDetail.value and remark.value != "":
             try:
-                res = requests.put(f"http://127.0.0.1:8000/approveRequest/{bookingId.value}",json=data)
+                url =urls()
+                url =url["approveRequest"]
+                res = requests.put(f"{url}{bookingId.value}",json=data)
                 if res.status_code == 200 and res.text != "404":
                     approveScreen.visible = None
                     approveScreen.visible = False
                     approveScreen.update()
+                    page.go("/home")
     
             except Exception as e:
                 approveScreen.visible = None
@@ -97,11 +101,14 @@ def ApproveRequest(page: ft.page):
         }
         if remark.value != "":
             try:
-                res = requests.put(f"http://127.0.0.1:8000/rejectRequest/{bookingId.value}",json=data)
+                url =urls()
+                url =url["rejectRequest"]
+                res = requests.put(f"{url}{bookingId.value}",json=data)
                 if res.status_code == 200 and res.text != "404":
                     approveScreen.visible = None
                     approveScreen.visible = False
                     approveScreen.update()
+                    page.go("/home")
     
             except Exception as e:
                 approveScreen.visible = None
@@ -194,20 +201,22 @@ def ApproveRequest(page: ft.page):
         )
         return approveRequestsCard
 
-    reqData = ft.ListView()
+    reqData = ft.ListView(spacing=10)
     if allRequests != None:
         for res in allRequests:
-            date = datetime.strptime(res["tripDate"], "%Y-%m-%dT%H:%M:%S.%f")
-            reqData.controls.append(requestCard(
-                reqId= res["bookingNumber"],
-                reqBy = res["empUsername"], 
-                origin = res["startLocation"],
-                destination= res["destination"],
-                start= res["startTime"],
-                end= res["endTime"],
-                date= date.date()
-                
-            ))
+            if not res["tripStatus"]:
+                if not res["tripCanceled"]:
+                    date = datetime.strptime(res["tripDate"], "%Y-%m-%dT%H:%M:%S.%f")
+                    reqData.controls.append(requestCard(
+                        reqId= res["bookingNumber"],
+                        reqBy = res["empUsername"], 
+                        origin = res["startLocation"],
+                        destination= res["destination"],
+                        start= res["startTime"],
+                        end= res["endTime"],
+                        date= date.date()
+                        
+                    ))
     bookingId = ft.Text("Booking Number")
     actionButton =ft.ElevatedButton(
                         # "Final Approve",
@@ -250,7 +259,7 @@ def ApproveRequest(page: ft.page):
         controls=[
             ft.Container(
                 col={"sm": 6, "xl": 4},
-                height=page.height,
+                height=.9*page.height,
                 content=reqData,
             ),
 

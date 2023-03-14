@@ -5,6 +5,7 @@ import requests
 import secrets
 
 from localStorage.clientStorage import setUserData
+from user_controls.urls import urls
 
 # Function for signUP page that return a view.
 
@@ -26,6 +27,7 @@ def Signup(page: ft.page):
         color=ft.colors.WHITE,
         text_size= 15,
         height= 45,
+        suffix_text= "@tatapower.com",
         expand=True
     )
     # Password Field
@@ -52,8 +54,9 @@ def Signup(page: ft.page):
         label="Employee ID",
         color=ft.colors.WHITE,
         text_size= 15,
-        height= 45,
-        expand=True
+        # height= 45,
+        expand=True,
+        on_blur=lambda e:checkId(e)
     )
     # Department field
     department = ft.TextField(
@@ -82,7 +85,22 @@ def Signup(page: ft.page):
                 phoneNumber.error_text = None
                 phoneNumber.update()
         
-    
+    def checkId(e):
+        try:
+            url = urls()
+            url =url["allId"]
+            response = requests.get(f"{url}")
+            result = json.loads(response.content)
+            for res in result:
+                if empId.value == res["empId"]:
+                    empId.error_text = "This id is already in use"
+                    empId.update()
+                    break
+                empId.error_text = None
+                empId.update()
+        except:
+            pass
+        
     messageText =ft.Text("Enter credentials to register\n")
 
     # function that handel registeration process of a user to our database.
@@ -108,8 +126,9 @@ def Signup(page: ft.page):
                     "password": password.value,
                     "uid" : secrets.token_urlsafe(16)
                 }
-            
-                res = requests.post("http://127.0.0.1:8000/userSignup/", json=data)
+                url =urls()
+                url = url["signup"]
+                res = requests.post(f"{url}", json=data)
                 if res.status_code == 200 and res.text != "404":
                     setUserData(page, data)
                     page.client_storage.set("isAuthenticated", True)
@@ -117,6 +136,8 @@ def Signup(page: ft.page):
                     page.update()
                     page.go("/home")
                 else:
+                    page.splash =None
+                    page.update()
                     messageText.value = "Something went wrong\n"
                     messageText.color = ft.colors.RED_600
                     messageText.update()

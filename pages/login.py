@@ -5,6 +5,7 @@ import json
 
 # import for local data storage of user
 from localStorage.clientStorage import setUserData
+from user_controls.urls import urls
 
 # function for login view
 
@@ -47,8 +48,9 @@ def Login(page: ft.page):
                     "password": password.value
 
                 }
-                res = requests.post(
-                    "http://127.0.0.1:8000/userLogin", json=data)
+                url = urls()
+                url = url["login"]
+                res = requests.post(f"{url}", json=data)
                 if res.status_code == 200 and res.text != "404":
                     resData = json.loads(res.content)
                     setUserData(page, resData)
@@ -61,6 +63,9 @@ def Login(page: ft.page):
                     mesgText.value = "you are not a registered user"
                     mesgText.color = ft.colors.RED_ACCENT_200
                     mesgText.update()
+                    page.splash = None
+                    loginBtn.disabled =False
+                    page.update()
             except:
                 page.splash = None
                 loginBtn.disabled =False

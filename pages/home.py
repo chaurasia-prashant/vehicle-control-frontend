@@ -65,7 +65,7 @@ def Home(page: ft.page):
                 controls=[
                     ft.Container(
                         col={"sm": 6, "xl": 6},
-                        height= .85*page.height,
+                        height= .9*page.height,
                         content=ft.ListView(
                             controls=[
                                 homeCard(
