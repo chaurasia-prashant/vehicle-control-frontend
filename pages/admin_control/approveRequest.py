@@ -8,15 +8,24 @@ from user_controls.app_bar import Navbar
 # this page is controlled only by admin
 # To approve a request admin have to fill vehicle details and remarks.
 
-
 def ApproveRequest(page: ft.page):
     
-    
-    allRequests = getAllBookkingRequest(page)
-    
+    allRequests = getAllBookkingRequest()
 
     # function to enable approving form for admin.
-    def showFinalApprovePopUp(e):
+    
+    
+    def showFinalApprovePopUp(e,reqId,id):
+        if id == 1:
+            actionButton.text ="Final Approve"
+            actionButton.on_click = approveByAdmin
+            actionButton.update
+        else:
+            actionButton.text ="Final Reject"
+            actionButton.on_click = rejectByAdmin
+            actionButton.update    
+        bookingId.value = reqId
+        bookingId.update()
         approveScreen.visible = None
         approveScreen.visible = True
         approveScreen.update()
@@ -28,17 +37,68 @@ def ApproveRequest(page: ft.page):
         approveScreen.visible = False
         approveScreen.update()
         page.update()
-        
-        
-    # def approveByAdmin(e):
-        
-    #     try:
-    #         res = requests.post("/approveRequest/{bookingId}",json=data)
-    #     except Exception as e:
-    #         print(e)
+    
+    vehicleDetail =ft.TextField(
+                    label="Vehicle Number",
+                    color=ft.colors.WHITE,
+                    height=50,
+                    border_color=ft.colors.BLUE,
+                )    
+    remark =ft.TextField(
+                    label="Remark",
+                    color=ft.colors.WHITE,
+                    multiline=True,
+                    max_lines=3,
+                    max_length=100,
+                    border_color=ft.colors.BLUE,
+                )
+           
+    def approveByAdmin(e):
+        data = {
+            "vehicleAlloted": "jh20",
+            "vehicleNumber": vehicleDetail.value,
+            "tripStatus": True,
+            "tripCanceled": False,
+            "remark": remark.value,
+        }
+        try:
+            res = requests.put(f"http://127.0.0.1:8000/approveRequest/{bookingId.value}",json=data)
+            if res.status_code == 200 and res.text != "404":
+                approveScreen.visible = None
+                approveScreen.visible = False
+                approveScreen.update()
+   
+        except Exception as e:
+            approveScreen.visible = None
+            approveScreen.visible = False
+            approveScreen.update()
+            print(e)
+            
+    def rejectByAdmin(e):
+        data = {
+            "vehicleAlloted": None,
+            "vehicleNumber": None,
+            "tripStatus": False,
+            "tripCanceled": True,
+            "remark": remark.value,
+        }
+        try:
+            res = requests.put(f"http://127.0.0.1:8000/rejectRequest/{bookingId.value}",json=data)
+            if res.status_code == 200 and res.text != "404":
+                approveScreen.visible = None
+                approveScreen.visible = False
+                approveScreen.update()
+   
+        except Exception as e:
+            approveScreen.visible = None
+            approveScreen.visible = False
+            approveScreen.update()
+            print(e)
 
     # Approve request's card.
-    def requestCard(reqBy,origin,destination,start,end,date):
+    def requestCard(reqId,reqBy,origin,destination,start,end,date):
+        id1 = 1
+        id2 = 0
         approveRequestsCard = ft.Card(
             content=ft.Container(
                 content=ft.Column(
@@ -93,18 +153,18 @@ def ApproveRequest(page: ft.page):
                                 "Reject",
                                 expand=True,
                                 bgcolor=ft.colors.RED_900,
-                                color=ft.colors.WHITE70
+                                color=ft.colors.WHITE70,
+                                on_click=lambda e: showFinalApprovePopUp(e,reqId,id2)
 
                             ),
                                 ft.Container(width=10),
                                 ft.ElevatedButton(
                                 "Approve",
-                                expand=True,
+                                expand =True,
                                 bgcolor=ft.colors.GREEN_900,
                                 color=ft.colors.WHITE70,
-                                on_click=lambda _: showFinalApprovePopUp
-
-                            ),
+                                on_click= lambda e:showFinalApprovePopUp(e,reqId,id1)
+                                ),
                                 ft.Container(width=20)
                             ],
                             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
@@ -118,18 +178,25 @@ def ApproveRequest(page: ft.page):
         return approveRequestsCard
 
     reqData = ft.ListView()
-    for res in allRequests:
-        date = datetime.strptime(res["tripDate"], "%Y-%m-%dT%H:%M:%S.%f")
-        reqData.controls.append(requestCard(
-            reqBy = res["empUsername"], 
-            origin = res["startLocation"],
-            destination= res["destination"],
-            start= res["startTime"],
-            end= res["endTime"],
-            date= date.date()
-            
-        ))
-        
+    if allRequests != None:
+        for res in allRequests:
+            date = datetime.strptime(res["tripDate"], "%Y-%m-%dT%H:%M:%S.%f")
+            reqData.controls.append(requestCard(
+                reqId= res["bookingNumber"],
+                reqBy = res["empUsername"], 
+                origin = res["startLocation"],
+                destination= res["destination"],
+                start= res["startTime"],
+                end= res["endTime"],
+                date= date.date()
+                
+            ))
+    bookingId = ft.Text("Booking Number")
+    actionButton =ft.ElevatedButton(
+                        # "Final Approve",
+                        bgcolor=ft.colors.GREEN_900,
+                        # on_click=approveByAdmin
+                    )
     
     # Approve form card for admin
     approveScreen = ft.Container(
@@ -141,32 +208,19 @@ def ApproveRequest(page: ft.page):
             padding=15,
             border_radius=10,
             content=ft.Column([
-                ft.Text("Booking Number"),
-                ft.Dropdown(
-                    label="Vehicle Number",
-                    color=ft.colors.WHITE,
-                    height=50,
-                    border_color=ft.colors.BLUE,
-                ),
-                ft.TextField(
-                    label="Remark",
-                    color=ft.colors.WHITE,
-                    multiline=True,
-                    max_lines=3,
-                    max_length=100,
-                    border_color=ft.colors.BLUE,
-                ),
+                ft.Row([
+                    ft.Text("Booking Number: "),
+                    bookingId,
+                ]),
+                
+                vehicleDetail,
+                remark,
                 ft.Row([
                     ft.ElevatedButton(
                         "Close",
                         bgcolor=ft.colors.RED_900,
                         on_click=closeFinalApprovePopUp
-                    ),   ft.ElevatedButton(
-                        "Final Approve",
-                        bgcolor=ft.colors.GREEN_900,
-                        
-                        # on_click=approveByAdmin
-                    ),
+                    ),   actionButton
                 ]),
 
             ],

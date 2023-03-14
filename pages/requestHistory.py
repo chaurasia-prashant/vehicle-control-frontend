@@ -98,19 +98,22 @@ def RequestHistory(page: ft.page):
         )
         return historyCard
     reqData = ft.ListView()
-    for res in reqHistory:
-        date = datetime.strptime(res["tripDate"], "%Y-%m-%dT%H:%M:%S.%f")
-        reqData.controls.append(requestHistoryCard(
-            status= res["tripStatus"],
-            cancled=res["tripCanceled"],
-            reqNumber = res["bookingNumber"], 
-            origin = res["startLocation"],
-            destination= res["destination"],
-            start= res["startTime"],
-            end= res["endTime"],
-            date= date.date()
-            
-        ))
+    if reqHistory != None:
+        for res in reqHistory:
+            date = datetime.strptime(res["tripDate"], "%Y-%m-%dT%H:%M:%S.%f")
+            reqData.controls.append(requestHistoryCard(
+                status= res["tripStatus"],
+                cancled=res["tripCanceled"],
+                reqNumber = res["bookingNumber"], 
+                origin = res["startLocation"],
+                destination= res["destination"],
+                start= res["startTime"],
+                end= res["endTime"],
+                date= date.date()
+                ))
+    else:
+        reqData.controls.append(ft.Text("No Data Found"))
+        
 
     requestHistory = ft.View(
         "/requestHistory",
@@ -120,6 +123,7 @@ def RequestHistory(page: ft.page):
         controls=[
             ft.ResponsiveRow(
                 controls=[
+                    
                     ft.Container(
                         col={"sm": 6, "xl": 4},
                         content=reqData,

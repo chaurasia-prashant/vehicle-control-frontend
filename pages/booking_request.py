@@ -30,12 +30,14 @@ def BookingRequest(page: ft.page):
     startTime = ft.TextField(
         label="Start Time",
         color=ft.colors.WHITE,
+        hint_text="Use 24H format as hh:mm",
         height=50,
 
     )
     endTime = ft.TextField(
         label="End Time",
         color=ft.colors.WHITE,
+        hint_text="Use 24H format as hh:mm",
         height=50,
 
     )
@@ -45,31 +47,52 @@ def BookingRequest(page: ft.page):
                         color= ft.colors.RED_400,
                         visible=False)
     
+    def validateTime(value):
+        chars = "abcdefghijklmnopqrstuvwxyz!@#$%^&*()-_=+\|]}[{';.>,</?*-+}]`~ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        getSep = 0
+        for val in value:
+            if val == ":":
+                getSep = 1
+            if val in chars:
+                return False
+        if getSep == 1:
+            return True
+        else:
+            return False
     
     def book_request(e):
-        userData = getUserData(page)
-        data = {
-            "bookingNumber": secrets.token_urlsafe(6),
-            "empId": userData["empId"], 
-            "empUsername": userData["username"],
-            "userDepartment": userData["department"],
-            "tripDate": str(datetime.now()),
-            "startLocation": startLocation.value,
-            "destination": destination.value,
-            "startTime": startTime.value,
-            "endTime": endTime.value,
-            "vehicleAlloted": None,
-            "vehicleNumber": None,
-            "tripStatus": False,
-            "tripCompleted": False,
-            "tripCanceled": False,
-            "reason": None,
-            "remark": None,
-        }
+        errorText.visible =False
+        errorText.update()
         # Using try and catch to handle errors.
-        if startLocation.value  and destination.value and startTime.value and endTime.value != "":
+        if not validateTime(startTime.value)  :
+            errorText.value ="Start Time is not in format"
+            errorText.visible =True
+            errorText.update()
+        elif not validateTime(endTime.value) :
+            errorText.value ="End Time is not in format"
+            errorText.visible =True
+            errorText.update()
+        elif startLocation.value  and destination.value and startTime.value and endTime.value != "":
             try:
-                
+                userData = getUserData(page)
+                data = {
+                    "bookingNumber": secrets.token_urlsafe(6),
+                    "empId": userData["empId"], 
+                    "empUsername": userData["username"],
+                    "userDepartment": userData["department"],
+                    "tripDate": str(datetime.now()),
+                    "startLocation": startLocation.value,
+                    "destination": destination.value,
+                    "startTime": startTime.value,
+                    "endTime": endTime.value,
+                    "vehicleAlloted": None,
+                    "vehicleNumber": None,
+                    "tripStatus": False,
+                    "tripCompleted": False,
+                    "tripCanceled": False,
+                    "reason": None,
+                    "remark": None,
+                }
                 res = requests.post("http://127.0.0.1:8000/vehicleBooking/", json=data)
                 if res.status_code == 200 and res.text != "404":
                     errorText.value = "Request Send Successfuly"
