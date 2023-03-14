@@ -21,6 +21,8 @@ def ApproveRequest(page: ft.page):
             actionButton.on_click = approveByAdmin
             actionButton.update
         else:
+            vehicleDetail.visible = False
+            vehicleDetail.update()
             actionButton.text ="Final Reject"
             actionButton.on_click = rejectByAdmin
             actionButton.update    
@@ -29,14 +31,18 @@ def ApproveRequest(page: ft.page):
         approveScreen.visible = None
         approveScreen.visible = True
         approveScreen.update()
-        page.update()
+        # page.update()
     # function to disable approving form.
 
     def closeFinalApprovePopUp(e):
+        vehicleDetail.visible = True
+        vehicleDetail.update()
         approveScreen.visible = None
         approveScreen.visible = False
         approveScreen.update()
-        page.update()
+        errMessage.visible =False
+        errMessage.update()
+        # page.update()
     
     vehicleDetail =ft.TextField(
                     label="Vehicle Number",
@@ -52,7 +58,10 @@ def ApproveRequest(page: ft.page):
                     max_length=100,
                     border_color=ft.colors.BLUE,
                 )
-           
+    errMessage =ft.Text(
+        "All fields are mandatory",
+        visible=False,     
+        color= ft.colors.RED_ACCENT_200)       
     def approveByAdmin(e):
         data = {
             "vehicleAlloted": "jh20",
@@ -61,18 +70,22 @@ def ApproveRequest(page: ft.page):
             "tripCanceled": False,
             "remark": remark.value,
         }
-        try:
-            res = requests.put(f"http://127.0.0.1:8000/approveRequest/{bookingId.value}",json=data)
-            if res.status_code == 200 and res.text != "404":
+        if vehicleDetail.value and remark.value != "":
+            try:
+                res = requests.put(f"http://127.0.0.1:8000/approveRequest/{bookingId.value}",json=data)
+                if res.status_code == 200 and res.text != "404":
+                    approveScreen.visible = None
+                    approveScreen.visible = False
+                    approveScreen.update()
+    
+            except Exception as e:
                 approveScreen.visible = None
                 approveScreen.visible = False
                 approveScreen.update()
-   
-        except Exception as e:
-            approveScreen.visible = None
-            approveScreen.visible = False
-            approveScreen.update()
-            print(e)
+                page.go("/serverNotFound")
+        else:
+            errMessage.visible =True
+            errMessage.update()
             
     def rejectByAdmin(e):
         data = {
@@ -82,18 +95,22 @@ def ApproveRequest(page: ft.page):
             "tripCanceled": True,
             "remark": remark.value,
         }
-        try:
-            res = requests.put(f"http://127.0.0.1:8000/rejectRequest/{bookingId.value}",json=data)
-            if res.status_code == 200 and res.text != "404":
+        if remark.value != "":
+            try:
+                res = requests.put(f"http://127.0.0.1:8000/rejectRequest/{bookingId.value}",json=data)
+                if res.status_code == 200 and res.text != "404":
+                    approveScreen.visible = None
+                    approveScreen.visible = False
+                    approveScreen.update()
+    
+            except Exception as e:
                 approveScreen.visible = None
                 approveScreen.visible = False
                 approveScreen.update()
-   
-        except Exception as e:
-            approveScreen.visible = None
-            approveScreen.visible = False
-            approveScreen.update()
-            print(e)
+                page.go("/serverNotFound")
+        else:
+            errMessage.visible =True
+            errMessage.update()
 
     # Approve request's card.
     def requestCard(reqId,reqBy,origin,destination,start,end,date):
@@ -208,6 +225,7 @@ def ApproveRequest(page: ft.page):
             padding=15,
             border_radius=10,
             content=ft.Column([
+                errMessage,
                 ft.Row([
                     ft.Text("Booking Number: "),
                     bookingId,
@@ -253,7 +271,7 @@ def ApproveRequest(page: ft.page):
                         height=500,
                         col={"xs": 0, "sm": 4, "xl": 2},
                         content=ft.Image(
-                            f"/car.png",
+                            f"/approve.png",
                             height=page.height,
                             width=.5*page.width,
                             fit=ft.ImageFit.CONTAIN,

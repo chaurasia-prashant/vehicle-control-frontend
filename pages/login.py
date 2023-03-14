@@ -8,9 +8,8 @@ from localStorage.clientStorage import setUserData
 
 # function for login view
 
-def Login(page: ft.page):
 
-    
+def Login(page: ft.page):
 
     # empId field for login
     empId = ft.TextField(
@@ -27,28 +26,53 @@ def Login(page: ft.page):
         height=50,
     )
 
-    # function for handeling user login event.
+    mesgText = ft.Text(
+        "Enter Credentials to Login",
+        color=ft.colors.BLUE
+    )
+
     
 
+    # function for handeling user login event.
+
     def login_user(e):
-        data = {
-            "empId": empId.value,
-            "password": password.value
 
-        }
-        # print(data)
-        try:
-            res = requests.post("http://127.0.0.1:8000/userLogin", json=data)
-            if res.status_code == 200 and res.text != "404":
-                resData = json.loads(res.content)
-                setUserData(page, resData)
-                page.client_storage.set("isAuthenticated", True)
-                page.go("/home")
-            else:
-                print("you are not a registered user")
-        except Exception as e:
-            print(e)
+        if empId.value and password.value != "":
+            try:
+                page.splash = ft.ProgressBar()
+                loginBtn.disabled =True
+                page.update()
+                data = {
+                    "empId": empId.value,
+                    "password": password.value
 
+                }
+                res = requests.post(
+                    "http://127.0.0.1:8000/userLogin", json=data)
+                if res.status_code == 200 and res.text != "404":
+                    resData = json.loads(res.content)
+                    setUserData(page, resData)
+                    page.client_storage.set("isAuthenticated", True)
+                    page.splash = None
+                    loginBtn.disabled =False
+                    page.update()
+                    page.go("/home")
+                else:
+                    mesgText.value = "you are not a registered user"
+                    mesgText.color = ft.colors.RED_ACCENT_200
+                    mesgText.update()
+            except:
+                page.splash = None
+                loginBtn.disabled =False
+                page.update()
+                page.go("/serverNotFound")
+        else:
+            mesgText.value = "All fields are mandatory"
+            mesgText.color = ft.colors.RED_ACCENT_200
+            mesgText.update()
+    loginBtn = ft.ElevatedButton(
+        "Login",
+        on_click=login_user)
     loginPage = ft.View(
         "/",
         bgcolor=ft.colors.DEEP_PURPLE_100,
@@ -87,10 +111,7 @@ def Login(page: ft.page):
                                         bgcolor=ft.colors.BLACK87,
                                         border_radius=10,
                                         content=ft.Column([
-                                            ft.Text(
-                                                "Enter Credentials to Login",
-                                                color=ft.colors.BLUE
-                                            ),
+                                            mesgText,
                                             empId,
                                             password,
 
@@ -119,9 +140,7 @@ def Login(page: ft.page):
 
                                                     width=100,
                                                     # Trigger user login event
-                                                    content=ft.ElevatedButton(
-                                                        "Login",
-                                                        on_click=login_user),
+                                                    content=loginBtn,
                                                     expand=True
                                                 ),
                                             ],

@@ -1,10 +1,13 @@
 import flet as ft
+from localStorage.clientStorage import getUserData
 from user_controls.app_bar import Navbar
 
 # function for HOME page view.
 
 
 def Home(page: ft.page):
+    
+    userData = getUserData(page)
 
     # home card for user actions
     # function takes value and make card to use multiple times.
@@ -72,8 +75,8 @@ def Home(page: ft.page):
                                         size=40,
                                         color=ft.colors.RED_900,
                                     ),
-                                    titleText="UserName",
-                                    subTitletext="UserMail ID",
+                                    titleText=userData["username"],
+                                    subTitletext=userData["empId"],
                                     btnText="Profile",
                                     pageTo=None
                                 ),

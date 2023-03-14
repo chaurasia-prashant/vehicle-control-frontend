@@ -74,6 +74,8 @@ def BookingRequest(page: ft.page):
             errorText.update()
         elif startLocation.value  and destination.value and startTime.value and endTime.value != "":
             try:
+                page.splash =ft.ProgressBar()
+                page.update()
                 userData = getUserData(page)
                 data = {
                     "bookingNumber": secrets.token_urlsafe(6),
@@ -100,11 +102,15 @@ def BookingRequest(page: ft.page):
                     errorText.visible =True
                     errorText.update()
                     time.sleep(1)
+                    page.splash =None
+                    page.update()
                     page.go("/home")
             except:
                 errorText.value = "Something Went Wrong\nUnable to procced your request\n"
                 errorText.visible =True
                 errorText.update()
+                page.splash =None
+                page.update()
         else:
             errorText.visible =True
             errorText.update()
@@ -163,7 +169,7 @@ def BookingRequest(page: ft.page):
                                 height=500,
                                 col={"xs": 0, "sm": 5, "xl": 2},
                                 content=ft.Image(
-                                    f"/car.png",
+                                    f"/request.png",
                                     height=page.height,
                                     width=.5*page.width,
                                     fit=ft.ImageFit.CONTAIN,

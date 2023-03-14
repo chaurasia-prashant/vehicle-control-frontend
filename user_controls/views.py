@@ -4,6 +4,8 @@
 from flet import *
 from pages.home import Home
 from pages.login import Login
+from pages.pageNotFound import pageNotFound
+from pages.serverError import serverError
 from pages.signup import Signup
 from pages.booking_request import BookingRequest
 from pages.requestHistory import RequestHistory
@@ -23,6 +25,8 @@ def views_handler(page, route):
         "/requestHistory": RequestHistory(page),
         "/approveRequest": ApproveRequest(page),
         "/vehicleDetail": VehicleDetail(page),
+        "/pageNotFound" : pageNotFound(page),
+        "/serverNotFound" : serverError(page),
     }
 
     return routes[route]

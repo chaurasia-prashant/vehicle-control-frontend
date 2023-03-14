@@ -19,7 +19,7 @@ def Navbar(page, ft=ft):
         actions=[
             ft.IconButton(ft.icons.HOME, on_click=lambda _: page.go('/home')),
             ft.IconButton(ft.icons.LOGOUT_ROUNDED,
-                          on_click=logOut),
+                          on_click=lambda e:logOut(e)),
 
 
         ]

@@ -9,10 +9,11 @@ from user_controls.views import views_handler
 
 def main(page: Page):
     page.bgcolor = colors.DEEP_PURPLE_100
+    page.title = "Book my trip"
 
     # function for the route change. It calls a views_handler to change for the routes.
     def route_change(route):
-        page.views.clear()
+        # page.views.clear()
         page.views.append(views_handler(page, page.route))
         page.update()
 
