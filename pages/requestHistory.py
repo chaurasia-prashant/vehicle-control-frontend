@@ -98,7 +98,7 @@ def RequestHistory(page: ft.page):
         )
         return historyCard
     reqData = ft.ListView()
-    if reqHistory != None:
+    if reqHistory != []:
         for res in reqHistory:
             date = datetime.strptime(res["tripDate"], "%Y-%m-%dT%H:%M:%S.%f")
             reqData.controls.append(requestHistoryCard(
@@ -112,7 +112,9 @@ def RequestHistory(page: ft.page):
                 date= date.date()
                 ))
     else:
-        reqData.controls.append(ft.Text("No Data Found"))
+        reqData= ft.Container(padding = 30,content=ft.Text("No Requests Created",
+                                        size=50,
+                                        color= ft.colors.BLACK))
         
 
     requestHistory = ft.View(

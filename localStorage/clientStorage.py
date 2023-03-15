@@ -6,6 +6,8 @@ import flet as ft
 # triggers on user successful registration or login.
 
 
+
+
 def setUserData(page, userData):
     try:
         pref = page.client_storage
@@ -14,6 +16,12 @@ def setUserData(page, userData):
         pref.set("empId", userData["empId"])
         pref.set("department", userData["department"])
         pref.set("phoneNumber", userData["phoneNumber"])
+        pref.set("isAuthorized", userData["isAuthorized"])
+        pref.set("verifyPhoneNumber", userData["verifyPhoneNumber"])
+        pref.set("verifyEmail", userData["verifyEmail"])
+        pref.set("isOwner", userData["isOwner"])
+        pref.set("isAdmin", userData["isAdmin"])
+        
         pref.set("uid", userData["uid"])
     except:
         return "error"
@@ -30,5 +38,29 @@ def getUserData(page):
     data["empId"] = pref.get("empId")
     data["department"] = pref.get("department")
     data["phoneNumber"] = pref.get("phoneNumber")
+    data["isAuthorized"] = pref.get("isAuthorized")
+    data["verifyPhoneNumber"] = pref.get("verifyPhoneNumber")
+    data["verifyEmail"] = pref.get("verifyEmail")
+    data["isOwner"] = pref.get("isOwner")
+    data["isAdmin"] = pref.get("isAdmin")
     data["uid"] = pref.get("uid")
+    
     return data
+
+
+def resetUserData(page):
+    try:
+        pref = page.client_storage
+        pref.remove("username")
+        pref.remove("email")
+        pref.remove("empId")
+        pref.remove("department")
+        pref.remove("phoneNumber")
+        pref.remove("isAuthorized")
+        pref.remove("verifyPhoneNumber")
+        pref.remove("verifyEmail")
+        pref.remove("isOwner")
+        pref.remove("isAdmin")
+        pref.remove("uid")
+    except:
+        return "error"

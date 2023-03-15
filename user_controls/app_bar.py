@@ -1,5 +1,7 @@
 import flet as ft
 
+from localStorage.clientStorage import resetUserData
+
 # function for the navbar that we using in the website for easy access to
 # home screen from any page and logout activity.
 
@@ -8,6 +10,7 @@ def Navbar(page, ft=ft):
 
     def logOut(e):
         page.client_storage.set("isAuthenticated", False)
+        resetUserData(page)
         page.go("/")
 
     NavBar = ft.AppBar(

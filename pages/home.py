@@ -104,7 +104,7 @@ def Home(page: ft.page):
                                     pageTo="/requestHistory"
                                 ),
                                 homeCard(
-                                    isVisible=True,
+                                    isVisible=userData["isAdmin"],
                                     avtCont=ft.Icon(
                                         ft.icons.ADMIN_PANEL_SETTINGS,
                                         size=30,
@@ -116,7 +116,7 @@ def Home(page: ft.page):
                                     pageTo="/approveRequest"
                                 ),
                                 homeCard(
-                                    isVisible=True,
+                                    isVisible=userData["isAdmin"],
                                     avtCont=ft.Icon(
                                         ft.icons.CAR_CRASH_SHARP,
                                         size=30,
@@ -128,7 +128,9 @@ def Home(page: ft.page):
                                     pageTo="/vehicleDetail"
                                 ),
 
-                            ]
+                            ],
+                            first_item_prototype= True
+                            
                         ),
                     ),
                     ft.Container(

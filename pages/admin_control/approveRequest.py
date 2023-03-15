@@ -202,7 +202,7 @@ def ApproveRequest(page: ft.page):
         return approveRequestsCard
 
     reqData = ft.ListView(spacing=10)
-    if allRequests != None:
+    if allRequests != []:
         for res in allRequests:
             if not res["tripStatus"]:
                 if not res["tripCanceled"]:
@@ -217,6 +217,10 @@ def ApproveRequest(page: ft.page):
                         date= date.date()
                         
                     ))
+    else:
+        reqData = ft.Container(padding = 30,content=ft.Text("No Requests Found",
+                                        size=50,
+                                        color= ft.colors.BLACK))
     bookingId = ft.Text("Booking Number")
     actionButton =ft.ElevatedButton(
                         # "Final Approve",

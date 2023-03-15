@@ -118,12 +118,17 @@ def Signup(page: ft.page):
                 page.splash =ft.ProgressBar()
                 page.update()    
                 data = {
-                    "username": username.value,
-                    "email": email.value,
+                    "username": username.value.title(),
+                    "email": email.value + email.suffix_text,
                     "empId": empId.value,
-                    "department": department.value,
+                    "department": department.value.capitalize(),
                     "phoneNumber": phoneNumber.value,
                     "password": password.value,
+                    "isAuthorized": False,
+                    "verifyPhoneNumber":False,
+                    "verifyEmail":False,
+                    "isOwner": False,
+                    "isAdmin":False,
                     "uid" : secrets.token_urlsafe(16)
                 }
                 url =urls()
