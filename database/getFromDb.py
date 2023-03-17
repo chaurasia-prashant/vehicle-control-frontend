@@ -14,7 +14,7 @@ def getUserRequestHistory(page):
         res= requests.get(f"{url}{userId}/")
         return json.loads(res.content)
     except Exception as e:
-        print(e)
+        return None
 
 
 def getAllBookkingRequest():
@@ -24,4 +24,13 @@ def getAllBookkingRequest():
         res= requests.get(f"{url}")
         return json.loads(res.content)
     except Exception as e:
-        print(e)
+        return None
+    
+def getAllVehicles():
+    try:
+        url =urls()
+        url =url["getAllVehicles"]
+        res= requests.get(f"{url}")
+        return json.loads(res.content)
+    except Exception as e:
+        return None

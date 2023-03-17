@@ -9,6 +9,8 @@ def urls():
         "allBookingRequests": f"{static}/allBookingRequests/",
         "approveRequest": f"{static}/approveRequest/",
         "rejectRequest": f"{static}/rejectRequest/",
+        "vehicleRegister" : f"{static}/vehicleRegister/",
+        "getAllVehicles" : f"{static}/getAllVehicles/",
         
     }
     return data

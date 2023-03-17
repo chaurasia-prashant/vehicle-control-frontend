@@ -1,7 +1,9 @@
 from datetime import datetime
+import time
 import flet as ft
 import requests
-from database.getFromDb import getAllBookkingRequest
+from database.getFromDb import getAllBookkingRequest, getAllVehicles
+from database.staticData import secondsToTime
 from user_controls.app_bar import Navbar
 from user_controls.urls import urls
 
@@ -12,7 +14,8 @@ from user_controls.urls import urls
 def ApproveRequest(page: ft.page):
     
     allRequests = getAllBookkingRequest()
-
+    allVehicles = getAllVehicles()
+    timeTxt = secondsToTime()
     # function to enable approving form for admin.
     
     
@@ -45,10 +48,10 @@ def ApproveRequest(page: ft.page):
         errMessage.update()
         # page.update()
     
-    vehicleDetail =ft.TextField(
+    vehicleDetail =ft.Dropdown(
                     label="Vehicle Number",
                     color=ft.colors.WHITE,
-                    height=50,
+                    # height=50,
                     border_color=ft.colors.BLUE,
                 )    
     remark =ft.TextField(
@@ -59,29 +62,56 @@ def ApproveRequest(page: ft.page):
                     max_length=100,
                     border_color=ft.colors.BLUE,
                 )
+    
+    if allVehicles != None:
+        for vech in allVehicles:
+            vehicleDetail.options.append(ft.dropdown.Option(vech["vehicleNumber"]))
+    
     errMessage =ft.Text(
         "All fields are mandatory",
         visible=False,     
         color= ft.colors.RED_ACCENT_200)       
     def approveByAdmin(e):
+        errMessage.visible =False
+        errMessage.update()
         data = {
-            "vehicleAlloted": "jh20",
-            "vehicleNumber": vehicleDetail.value,
-            "tripStatus": True,
-            "tripCanceled": False,
+            "vehicleAlloted": vehicleDetail.value,
+            # "vehicleNumber": "",
+            # "bookingNumber":"",
+            # "tripDate" : "",
+            # "startTime": "",
+            # "endTime" : "",
+            # "tripStatus": True,
+            # "tripCanceled": False,
             "remark": remark.value,
         }
         if vehicleDetail.value and remark.value != "":
             try:
                 url =urls()
                 url =url["approveRequest"]
-                res = requests.put(f"{url}{bookingId.value}",json=data)
-                if res.status_code == 200 and res.text != "404":
+                res = requests.put(f"{url}{bookingId.value}/{vehicleDetail.value}",json=data)
+                if res.text == "500":
+                    errMessage.value = "Something went wrong ! Try again"
+                    errMessage.visible =True
+                    errMessage.update()
+                elif res.text == "904":
+                    errMessage.value = "Already Booking For This Time Interval"
+                    errMessage.visible =True
+                    errMessage.update()    
+                    
+                elif res.status_code == 200 and res.text != "404":
+                    errMessage.value = "Successfully Approved Request"
+                    errMessage.color = ft.colors.GREEN_500
+                    errMessage.visible =True
+                    errMessage.update()
+                    time.sleep(.5)
+                    # errMessage.visible =False
+                    # errMessage.update()
                     approveScreen.visible = None
                     approveScreen.visible = False
                     approveScreen.update()
                     page.go("/home")
-    
+
             except Exception as e:
                 approveScreen.visible = None
                 approveScreen.visible = False
@@ -202,19 +232,20 @@ def ApproveRequest(page: ft.page):
         return approveRequestsCard
 
     reqData = ft.ListView(spacing=10)
-    if allRequests != []:
+    if allRequests != [] and allRequests != None:
         for res in allRequests:
             if not res["tripStatus"]:
                 if not res["tripCanceled"]:
-                    date = datetime.strptime(res["tripDate"], "%Y-%m-%dT%H:%M:%S.%f")
+                    startTime = res["startTime"]
+                    endTime = res["endTime"]
                     reqData.controls.append(requestCard(
                         reqId= res["bookingNumber"],
                         reqBy = res["empUsername"], 
                         origin = res["startLocation"],
                         destination= res["destination"],
-                        start= res["startTime"],
-                        end= res["endTime"],
-                        date= date.date()
+                        start= timeTxt[startTime],
+                        end= timeTxt[endTime],
+                        date= res["tripDate"]
                         
                     ))
     else:

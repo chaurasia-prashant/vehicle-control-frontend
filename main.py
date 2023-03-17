@@ -29,7 +29,7 @@ def main(page: Page):
     # rroute to the first page on startup
     isAuth = page.client_storage.get("isAuthenticated")
     if isAuth:
-        page.go("/home")
+        page.go("/approveRequest")
     else:
         page.go("/")
 

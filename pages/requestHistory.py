@@ -1,6 +1,7 @@
 from datetime import datetime
 import flet as ft
 from database.getFromDb import getUserRequestHistory
+from database.staticData import secondsToTime
 from user_controls.app_bar import Navbar
 
 # View to access all request history of a user.
@@ -12,6 +13,7 @@ from user_controls.app_bar import Navbar
 def RequestHistory(page: ft.page):
     
     reqHistory = getUserRequestHistory(page)
+    timeTxt = secondsToTime()
     def statusCheck(status,cancled):
             if not cancled:
                 if status:
@@ -98,18 +100,20 @@ def RequestHistory(page: ft.page):
         )
         return historyCard
     reqData = ft.ListView()
-    if reqHistory != []:
+    if reqHistory != [] and reqHistory != None:
         for res in reqHistory:
-            date = datetime.strptime(res["tripDate"], "%Y-%m-%dT%H:%M:%S.%f")
+            # date = datetime.strptime(res["tripDate"], "%Y-%m-%dT%H:%M:%S.%f")
+            startTime = res["startTime"]
+            endTime = res["endTime"]
             reqData.controls.append(requestHistoryCard(
                 status= res["tripStatus"],
                 cancled=res["tripCanceled"],
                 reqNumber = res["bookingNumber"], 
                 origin = res["startLocation"],
                 destination= res["destination"],
-                start= res["startTime"],
-                end= res["endTime"],
-                date= date.date()
+                start= timeTxt[startTime] ,
+                end= timeTxt[endTime],
+                date= res["tripDate"]
                 ))
     else:
         reqData= ft.Container(padding = 30,content=ft.Text("No Requests Created",
