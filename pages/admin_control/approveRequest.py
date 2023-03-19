@@ -124,9 +124,9 @@ def ApproveRequest(page: ft.page):
     def rejectByAdmin(e):
         data = {
             "vehicleAlloted": None,
-            "vehicleNumber": None,
-            "tripStatus": False,
-            "tripCanceled": True,
+            # "vehicleNumber": None,
+            # "tripStatus": False,
+            # "tripCanceled": True,
             "remark": remark.value,
         }
         if remark.value != "":

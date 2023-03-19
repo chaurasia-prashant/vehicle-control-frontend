@@ -55,6 +55,66 @@ def Home(page: ft.page):
             )
         )
         return homecard
+    homeCardData = [
+        {
+            "isVisible" : True,
+            "avtCont" : ft.Icon(ft.icons.ACCOUNT_CIRCLE_SHARP,size=40,color=ft.colors.RED_900,), 
+            "titleText" : userData["username"], 
+            "subTitletext" : userData["empId"], 
+            "btnText" : "Profile", 
+            "pageTo": None
+            
+        },
+        {
+            "isVisible" : True,
+            "avtCont" : ft.Image(f"/car.png",fit=ft.ImageFit.CONTAIN,),
+            "titleText" : "Create Request", 
+            "subTitletext" : None, 
+            "btnText" : "Profile", 
+            "pageTo": "/bookingRequest"
+            
+        },
+        {
+            "isVisible" : True,
+            "avtCont" : ft.Icon(ft.icons.HISTORY_EDU,size=30,color=ft.colors.RED_900,), 
+            "titleText" : "Review all Trips", 
+            "subTitletext" : None, 
+            "btnText" : "Check", 
+            "pageTo": "/requestHistory"
+            
+        },
+        {
+            "isVisible" : userData["isAdmin"],
+            "avtCont" : ft.Icon(ft.icons.ADMIN_PANEL_SETTINGS,size=30,color=ft.colors.RED_900,), 
+            "titleText" : "Approve Request", 
+            "subTitletext" : None, 
+            "btnText" : "Approve", 
+            "pageTo": "/approveRequest"
+            
+        },
+        {
+            "isVisible" : userData["isAdmin"],
+            "avtCont" : ft.Icon(ft.icons.CAR_CRASH_SHARP,size=40,color=ft.colors.RED_900,), 
+            "titleText" : "Vehicle Details", 
+            "subTitletext" : None, 
+            "btnText" : "Status", 
+            "pageTo": "/vehicleDetail"
+            
+        }
+    ]
+    
+    homeView = ft.ListView()
+    
+    for i in homeCardData:
+        if i["isVisible"]:
+            homeView.controls.append(homeCard(
+                isVisible= i["isVisible"],
+                avtCont= i["avtCont"],
+                titleText= i["titleText"],
+                subTitletext=  i["subTitletext"],
+                btnText= i["btnText"],
+                pageTo= i["pageTo"]
+            ))
 
     homePage = ft.View(
         "/home",
@@ -65,73 +125,8 @@ def Home(page: ft.page):
                 controls=[
                     ft.Container(
                         col={"sm": 6, "xl": 6},
-                        height= .9*page.height,
-                        content=ft.ListView(
-                            controls=[
-                                homeCard(
-                                    isVisible=True,
-                                    avtCont=ft.Icon(
-                                        ft.icons.ACCOUNT_CIRCLE_SHARP,
-                                        size=40,
-                                        color=ft.colors.RED_900,
-                                    ),
-                                    titleText=userData["username"],
-                                    subTitletext=userData["empId"],
-                                    btnText="Profile",
-                                    pageTo=None
-                                ),
-                                homeCard(
-                                    isVisible=True,
-                                    avtCont=ft.Image(
-                                        f"/car.png",
-                                        fit=ft.ImageFit.CONTAIN,
-                                    ),
-                                    titleText="Request a New Trip",
-                                    subTitletext=None,
-                                    btnText="Create Request",
-                                    pageTo="/bookingRequest"
-                                ),
-                                homeCard(
-                                    isVisible=True,
-                                    avtCont=ft.Icon(
-                                        ft.icons.HISTORY_EDU,
-                                        size=30,
-                                        color=ft.colors.RED_900,
-                                    ),
-                                    titleText="Review all Trips",
-                                    subTitletext=None,
-                                    btnText="Check",
-                                    pageTo="/requestHistory"
-                                ),
-                                homeCard(
-                                    isVisible=userData["isAdmin"],
-                                    avtCont=ft.Icon(
-                                        ft.icons.ADMIN_PANEL_SETTINGS,
-                                        size=30,
-                                        color=ft.colors.RED_900,
-                                    ),
-                                    titleText="Approve request",
-                                    subTitletext=None,
-                                    btnText="Approve",
-                                    pageTo="/approveRequest"
-                                ),
-                                homeCard(
-                                    isVisible=userData["isAdmin"],
-                                    avtCont=ft.Icon(
-                                        ft.icons.CAR_CRASH_SHARP,
-                                        size=30,
-                                        color=ft.colors.RED_900,
-                                    ),
-                                    titleText="Vehicle Details",
-                                    subTitletext=None,
-                                    btnText="Status",
-                                    pageTo="/vehicleDetail"
-                                ),
-
-                            ],
-                            first_item_prototype= True
-                            
-                        ),
+                        height= .95*page.height,
+                        content=homeView,
                     ),
                     ft.Container(
                         col={"xs": 0, "sm": 6, "xl": 6},

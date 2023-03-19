@@ -1,7 +1,15 @@
 # imports for main file
 from flet import *
 # importing views that contain routes for all the pages.
-from user_controls.views import views_handler
+from pages.home import Home
+from pages.login import Login
+from pages.pageNotFound import pageNotFound
+from pages.serverError import serverError
+from pages.signup import Signup
+from pages.booking_request import BookingRequest
+from pages.requestHistory import RequestHistory
+from pages.admin_control.approveRequest import ApproveRequest
+from pages.admin_control.vehicleDetails import VehicleDetail
 
 # Main function of the website that will run the entire website.
 # Views that have control over all other pages is linked to this function
@@ -13,11 +21,27 @@ def main(page: Page):
 
     # function for the route change. It calls a views_handler to change for the routes.
     def route_change(route):
-        # page.views.clear()
-        page.views.append(views_handler(page, page.route))
-        page.update()
+        page.views.clear()
+        # page.views.append(Home(page))
+        
+        routeParm = page.route
+        match routeParm:
+            case "/" : page.views.append(Login(page))
+            case "/home" : page.views.append(Home(page))
+            case "/signup": page.views.append(Signup(page))
+            case "/bookingRequest": page.views.append(BookingRequest(page))
+            case "/requestHistory": page.views.append(RequestHistory(page))
+            case "/approveRequest": page.views.append(ApproveRequest(page))
+            case "/vehicleDetail": page.views.append(VehicleDetail(page))
+            case "/pageNotFound" : page.views.append(pageNotFound(page))
+            case "/serverNotFound" : page.views.append(serverError(page))
+    page.update()
 
     # pop function for route if user wants to go back.
+    
+
+    
+    
     def view_pop(view):
         page.views.pop()
         top_view = page.views[-1]
@@ -29,7 +53,7 @@ def main(page: Page):
     # rroute to the first page on startup
     isAuth = page.client_storage.get("isAuthenticated")
     if isAuth:
-        page.go("/approveRequest")
+        page.go("/home")
     else:
         page.go("/")
 

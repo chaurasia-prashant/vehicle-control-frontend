@@ -1,7 +1,9 @@
+import json
 import time
 import flet as ft
 import requests
 from database.getFromDb import getAllVehicles
+from database.staticData import secondsToTime
 from user_controls.app_bar import Navbar
 from user_controls.urls import urls
 
@@ -13,20 +15,31 @@ from user_controls.urls import urls
 
 
 def VehicleDetail(page: ft.page):
-    
-    
+    timeText = secondsToTime()
+    # if curreVehicleData != None:
+    #     curreVehicleData = json.loads(curreVehicleData)
+    # else:
+    #     curreVehicleData = None
 
     # Function to show status and booking's of a vehicle
-    def showvehicleScreen(e):
+    def showvehicleScreen(e,data):
+        page.client_storage.set("vehicleBooking", data)
         if page.width < 576:
             vehicalBookingScreen.visible = None
             vehicalBookingScreen.visible = True
             vehicalBookingScreen.update()
-        # page.update()
+        page.update()
 
     # hide vehicle booking history
     def closevehicleScreen(e):
-
+        # print("befor remove")
+        # print(page.client_storage.get("vehicleBooking"))
+        page.client_storage.remove("vehicleBooking")
+        # print("after remove")
+        # print(page.client_storage.get("vehicleBooking"))
+        dataCol.controls = None
+        dataCol.update()
+        
         vehicalBookingScreen.visible = None
         vehicalBookingScreen.visible = False
         vehicalBookingScreen.update()
@@ -43,7 +56,7 @@ def VehicleDetail(page: ft.page):
         
 
     # Vehicle card to show vehicles registered.
-    def vehicleDetailScreen(vechNumber,vechPhoneNumber):
+    def vehicleDetailScreen(vechNumber,vechPhoneNumber,data):
         vehicleDetail = ft.Card(
             content=ft.Container(
                 content=ft.Row([
@@ -74,7 +87,7 @@ def VehicleDetail(page: ft.page):
                         border_radius=50,
                         content=ft.IconButton(
                             icon=ft.icons.ARROW_FORWARD_IOS,
-                            on_click=showvehicleScreen
+                            on_click= lambda e:vehicleBookingTimeLine(e, data)
                         ),
                     )
 
@@ -87,52 +100,118 @@ def VehicleDetail(page: ft.page):
         return vehicleDetail
 
     # Card to show vehicle booking history.
-    vehicleBookHistory = ft.Container(
-        bgcolor=ft.colors.PURPLE_900,
-        border_radius=10,
-        content=ft.Column(
-            [
-                ft.Container(
-                    content=ft.Row([
-                        ft.Text(
-                            "Date :",
-                            weight=ft.FontWeight.BOLD),
-                        ft.Text(
-                            "DD-MM-YYYY",
-                            weight=ft.FontWeight.BOLD
-                        ),
-                    ]),
-                ),
+    
+    def minBlock(colr,tim):
+        minutesBlock = ft.Container(
+            padding=7,
+            width=60,
+            bgcolor=colr,
+            content= ft.Text(tim,color=ft.colors.BLACK),
+            
+            ) 
+        return minutesBlock
+    
 
-                ft.Container(height=4),
-                ft.Text(
-                    "Prashant Kumar Chaurasia"
+    def mntl(dateTxt,tmline):
+        maintimeline = ft.Column([
+            ft.Container(height=10),
+            ft.Container(content=ft.Text(dateTxt),),
+            ft.Container(
+                padding = 5,
+                height=100,
+                width=page.width,
+                bgcolor=ft.colors.WHITE,
+                border_radius=12,
+                content=tmline
                 ),
-                ft.Container(height=2),
-                ft.Row([
-                    ft.Text(
-                        "Department :"),
-                    ft.Text(
-                        "IMD"
-                    ),
-                ]),
-                ft.Container(height=2),
-                ft.Row([
-                    ft.Text(
-                        "3:50"),
-                    ft.Text(
-                        "To"
-                    ),
-                    ft.Text(
-                        "5:50"
-                    ),
-                ]),
+            
+            ])
+        return maintimeline   
+     
+    dataCol = ft.ListView(
+        spacing=5,
+        )
+    def vehicleBookingTimeLine(e,data):
+        # print("update")
+        # print(data)
+        if page.width < 576:
+            vehicalBookingScreen.visible = None
+            vehicalBookingScreen.visible = True
+            vehicalBookingScreen.update()
+        
+        # print(data)
+        if data != None:
+            data = json.loads(data)
+            # data  = sorted(data)
+            keys = list(data.keys())
+            keys.sort() 
+            for i in keys:
+                timeline = ft.ListView(
+                spacing=1,
+                horizontal= True,
+                )
+                tims = data[i]
+                dt = []
+                for j in tims.keys():
+                    for k in range(int(tims[j][0]),int(tims[j][1]),1800):
+                        dt.append(k)
+                for k in range(0,86400,1800):
+                    if k in dt:
+                        timeline.controls.append(minBlock(colr = ft.colors.RED,tim = timeText[f'{k}']))
+                    else:
+                        timeline.controls.append(minBlock(colr = ft.colors.BLUE,tim = timeText[f'{k}']))
+                dataCol.controls.append(mntl(dateTxt=i,tmline=timeline))
+                dataCol.update()
+        #     return dataCol
+        # else:
+        #     return ft.Text("No data found")
+    
+    # vehicleBookHistory = ft.Container(
+    #     bgcolor=ft.colors.PURPLE_900,
+    #     border_radius=10,
+    #     content=ft.Column(
+    #         [
+    #             ft.Container(
+    #                 content=ft.Row([
+    #                     ft.Text(
+    #                         "Date :",
+    #                         weight=ft.FontWeight.BOLD),
+    #                     ft.Text(
+    #                         "DD-MM-YYYY",
+    #                         weight=ft.FontWeight.BOLD
+    #                     ),
+    #                 ]),
+    #             ),
 
-            ],
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-        ),
-        padding=20,
-    )
+    #             ft.Container(height=4),
+    #             ft.Text(
+    #                 "Prashant Kumar Chaurasia"
+    #             ),
+    #             ft.Container(height=2),
+    #             ft.Row([
+    #                 ft.Text(
+    #                     "Department :"),
+    #                 ft.Text(
+    #                     "IMD"
+    #                 ),
+    #             ]),
+    #             ft.Container(height=2),
+    #             ft.Row([
+    #                 ft.Text(
+    #                     "3:50"),
+    #                 ft.Text(
+    #                     "To"
+    #                 ),
+    #                 ft.Text(
+    #                     "5:50"
+    #                 ),
+    #             ]),
+
+    #         ],
+    #         alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+    #     ),
+    #     padding=20,
+    # )
     
     vehicleNumber = ft.TextField(label= "Vehicle Number")
     vehiclePhoneNumber = ft.TextField(label= "Phone Number")
@@ -223,12 +302,7 @@ def VehicleDetail(page: ft.page):
         content=ft.Column([
             ft.Container(
                 height=.65*page.height,
-                content=ft.ListView(
-                    spacing=3,
-                    controls=[
-                        vehicleBookHistory,
-                    ]
-                ),),
+                content=dataCol,),
             # ft.Container(height= 15),
             ft.ElevatedButton(
                 "Close",
@@ -247,7 +321,8 @@ def VehicleDetail(page: ft.page):
         for vech in vehicles:
             allVehicleScreen.controls.append(vehicleDetailScreen(
                 vechNumber= vech["vehicleNumber"],
-                vechPhoneNumber=  vech["vehiclePhoneNumber"]
+                vechPhoneNumber=  vech["vehiclePhoneNumber"],
+                data= vech["bookedTime"]
             )) 
         page.update()
     
@@ -286,7 +361,7 @@ def VehicleDetail(page: ft.page):
                         height=500,
                         col={"xs": 0, "sm": 4, "xl": 2},
                         content=ft.ListView(
-                            controls=[vehicleBookHistory]
+                            controls=[dataCol,]
                         )
                     )
                 ])
