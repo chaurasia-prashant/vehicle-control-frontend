@@ -30,7 +30,9 @@ def BookingRequest(page: ft.page):
     )
     dateField = ft.Dropdown(
             label="Trip Date",
-            height=60,
+            label_style= ft.TextStyle(size=15),
+            height=58,
+            text_size= 15,
             expand= True
         )
     dateDropdown = ft.Container(
@@ -41,12 +43,16 @@ def BookingRequest(page: ft.page):
     )
     shour = ft.Dropdown(
             label="Hour",
-            height=60,
+            label_style= ft.TextStyle(size=15),
+            height=58,
+            text_size= 15,
             expand= True
         )
     sminut = ft.Dropdown(
             label="Minute",
-            height=60,
+            label_style= ft.TextStyle(size=15),
+            height=58,
+            text_size= 15,
             expand= True
         )
     startTime = ft.Row([
@@ -56,12 +62,16 @@ def BookingRequest(page: ft.page):
     ])
     ehour = ft.Dropdown(
             label="Hour",
-            height=60,
+            label_style= ft.TextStyle(size=15),
+            height=58,
+            text_size= 15,
             expand= True
         )
     eminut = ft.Dropdown(
             label="Minute",
-            height=60,
+            label_style= ft.TextStyle(size=15),
+            height=58,
+            text_size= 15,
             expand= True
         )
     endTime = ft.Row([
@@ -69,20 +79,15 @@ def BookingRequest(page: ft.page):
         ft.Text(":"),
         eminut
     ])
-    # startTime = ft.TextField(
-    #     label="Start Time",
-    #     color=ft.colors.WHITE,
-    #     hint_text="Use 24H format as hh:mm",
-    #     height=50,
+    
+    reasonField = ft.TextField(
+        label="Remark",
+        hint_text="Trip detail",
+        color=ft.colors.WHITE,
+        height=50,
 
-    # )
-    # endTime = ft.TextField(
-    #     label="End Time",
-    #     color=ft.colors.WHITE,
-    #     hint_text="Use 24H format as hh:mm",
-    #     height=50,
+    )
 
-    # )
     
     errorText = ft.Text("All fields are menedatory",
                         size=14,
@@ -96,34 +101,22 @@ def BookingRequest(page: ft.page):
     for i in range(24):
         shour.options.append(ft.dropdown.Option(i))
         ehour.options.append(ft.dropdown.Option(i))
-    for i in range(0,60,15):
+    for i in ["00", "30"]:
         sminut.options.append(ft.dropdown.Option(i))
         eminut.options.append(ft.dropdown.Option(i))
         
-    # def validateTime(value):
-    #     chars = "abcdefghijklmnopqrstuvwxyz!@#$%^&*()-_=+\|]}[{';.>,</?*-+}]`~ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    #     getSep = 0
-    #     for val in value:
-    #         if val == ":":
-    #             getSep = 1
-    #         if val in chars:
-    #             return False
-    #     if getSep == 1:
-    #         return True
-    #     else:
-    #         return False
+
     
     def book_request(e):
         errorText.visible =False
         errorText.update()
         # Using try and catch to handle errors.
         
-        # print(f"{type(shour.value)} , {sminut.value}, {ehour.value}, {eminut.value}")
         if shour.value == None and sminut.value == None and ehour.value == None and eminut.value == None  :
             errorText.value ="Please enter time"
             errorText.visible =True
             errorText.update()
-        elif startLocation.value  and destination.value != "":
+        elif startLocation.value  and destination.value and reasonField.value != "":
             try:
                 page.splash =ft.ProgressBar()
                 page.update()
@@ -145,7 +138,7 @@ def BookingRequest(page: ft.page):
                     "tripStatus": False,
                     "tripCompleted": False,
                     "tripCanceled": False,
-                    "reason": None,
+                    "reason": reasonField.value,
                     "remark": None,
                 }
                 url =urls()
@@ -178,35 +171,37 @@ def BookingRequest(page: ft.page):
         controls=[
             ft.ResponsiveRow(
                 controls=[
-                    ft.Container(
-                        width=.4*page.width,
+                        ft.Container(
+                        # width=.4*page.width,
                         col={"sm": 6, "xl": 6},
                         margin=30,
                         padding=30,
+                        # height = .8*page.height,
                         bgcolor=ft.colors.BLACK87,
                         border_radius=10,
                         content=ft.Column(
-
-                            [
+                            controls =[
                                 errorText,
                                 startLocation,
                                 destination,
                                 dateDropdown,
+                                
                                 ft.Text("  Trip Start Time",color=ft.colors.BLUE),
                                 startTime,
                                 ft.Text("  Trip End Time",color=ft.colors.BLUE),
                                 endTime,
+                                reasonField,
                                 ft.Container(height=30),
                                 ft.ElevatedButton(
                                     "Send Travel Request",
-                                    # height= 20,
+                                    # expand =True,
                                     width=.4*page.width - 30,
                                     bgcolor=ft.colors.WHITE,
                                     color=ft.colors.BLUE,
                                     on_click=book_request,
                                     
-                                )
-                            ]
+                                ),
+                            ],
                         ),
                     ),
 

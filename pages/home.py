@@ -8,7 +8,7 @@ from user_controls.app_bar import Navbar
 def Home(page: ft.page):
     
     userData = getUserData(page)
-
+    # print(userData)
     # home card for user actions
     # function takes value and make card to use multiple times.
     # "isVisible" for diciding who can access this card
@@ -62,7 +62,7 @@ def Home(page: ft.page):
             "titleText" : userData["username"], 
             "subTitletext" : userData["empId"], 
             "btnText" : "Profile", 
-            "pageTo": None
+            "pageTo": "/user/profile"
             
         },
         {
@@ -70,7 +70,7 @@ def Home(page: ft.page):
             "avtCont" : ft.Image(f"/car.png",fit=ft.ImageFit.CONTAIN,),
             "titleText" : "Create Request", 
             "subTitletext" : None, 
-            "btnText" : "Profile", 
+            "btnText" : "New Trip", 
             "pageTo": "/bookingRequest"
             
         },
@@ -125,7 +125,7 @@ def Home(page: ft.page):
                 controls=[
                     ft.Container(
                         col={"sm": 6, "xl": 6},
-                        height= .95*page.height,
+                        height= .9*page.height,
                         content=homeView,
                     ),
                     ft.Container(

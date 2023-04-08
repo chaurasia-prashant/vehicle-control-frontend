@@ -1,4 +1,10 @@
-import flet as ft
+import os
+from flet.security import encrypt,decrypt
+
+
+from dotenv import load_dotenv
+load_dotenv()
+secreat_key = os.environ["SECREAT_KEY"]
 
 # local storage for user
 
@@ -8,19 +14,20 @@ import flet as ft
 
 
 
+
 def setUserData(page, userData):
     try:
         pref = page.client_storage
-        pref.set("username", userData["username"])
-        pref.set("email", userData["email"])
-        pref.set("empId", userData["empId"])
-        pref.set("department", userData["department"])
-        pref.set("phoneNumber", userData["phoneNumber"])
-        pref.set("isAuthorized", userData["isAuthorized"])
-        pref.set("verifyPhoneNumber", userData["verifyPhoneNumber"])
-        pref.set("verifyEmail", userData["verifyEmail"])
-        pref.set("isOwner", userData["isOwner"])
-        pref.set("isAdmin", userData["isAdmin"])
+        pref.set("username", encrypt(userData["username"],secreat_key))
+        pref.set("email",encrypt(userData["email"],secreat_key) )
+        pref.set("empId",encrypt(userData["empId"],secreat_key) )
+        pref.set("department",encrypt(userData["department"],secreat_key) )
+        pref.set("phoneNumber",encrypt(userData["phoneNumber"],secreat_key) )
+        pref.set("isAuthorized",encrypt(str(userData["isAuthorized"]),secreat_key))
+        pref.set("verifyPhoneNumber",encrypt(str(userData["verifyPhoneNumber"]),secreat_key))
+        pref.set("verifyEmail",encrypt(str(userData["verifyEmail"]),secreat_key) )
+        pref.set("isOwner",encrypt(str(userData["isOwner"]),secreat_key) )
+        pref.set("isAdmin",encrypt(str(userData["isAdmin"]),secreat_key) )
         
         pref.set("uid", userData["uid"])
     except:
@@ -33,16 +40,16 @@ def setUserData(page, userData):
 def getUserData(page):
     pref = page.client_storage
     data = {}
-    data["username"] = pref.get("username")
-    data["email"] = pref.get("email")
-    data["empId"] = pref.get("empId")
-    data["department"] = pref.get("department")
-    data["phoneNumber"] = pref.get("phoneNumber")
-    data["isAuthorized"] = pref.get("isAuthorized")
-    data["verifyPhoneNumber"] = pref.get("verifyPhoneNumber")
-    data["verifyEmail"] = pref.get("verifyEmail")
-    data["isOwner"] = pref.get("isOwner")
-    data["isAdmin"] = pref.get("isAdmin")
+    data["username"] = decrypt( pref.get("username"), secreat_key)
+    data["email"] =decrypt( pref.get("email"), secreat_key)
+    data["empId"] =decrypt( pref.get("empId"), secreat_key)
+    data["department"] =decrypt( pref.get("department"), secreat_key)
+    data["phoneNumber"] =decrypt( pref.get("phoneNumber"), secreat_key)
+    data["isAuthorized"] = bool(decrypt( pref.get("isAuthorized"), secreat_key))
+    data["verifyPhoneNumber"] =bool(decrypt( pref.get("verifyPhoneNumber"), secreat_key))
+    data["verifyEmail"] = bool(decrypt( pref.get("verifyEmail"), secreat_key))
+    data["isOwner"] = bool(decrypt( pref.get("isOwner"), secreat_key))
+    data["isAdmin"] = bool(decrypt( pref.get("isAdmin"), secreat_key))
     data["uid"] = pref.get("uid")
     
     return data

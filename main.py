@@ -4,6 +4,7 @@ from flet import *
 from pages.home import Home
 from pages.login import Login
 from pages.pageNotFound import pageNotFound
+from pages.profile import userProfile
 from pages.serverError import serverError
 from pages.signup import Signup
 from pages.booking_request import BookingRequest
@@ -18,6 +19,10 @@ from pages.admin_control.vehicleDetails import VehicleDetail
 def main(page: Page):
     page.bgcolor = colors.DEEP_PURPLE_100
     page.title = "Book my trip"
+    page.theme_mode = "dark"
+    
+    
+
 
     # function for the route change. It calls a views_handler to change for the routes.
     def route_change(route):
@@ -33,8 +38,10 @@ def main(page: Page):
             case "/requestHistory": page.views.append(RequestHistory(page))
             case "/approveRequest": page.views.append(ApproveRequest(page))
             case "/vehicleDetail": page.views.append(VehicleDetail(page))
+            case "/user/profile" : page.views.append(userProfile(page))
             case "/pageNotFound" : page.views.append(pageNotFound(page))
             case "/serverNotFound" : page.views.append(serverError(page))
+                 
     page.update()
 
     # pop function for route if user wants to go back.
@@ -60,4 +67,4 @@ def main(page: Page):
 
 # refrencing app to run the main file.
 # setting ports , view and asset directory
-app(target=main, port=8080, view=WEB_BROWSER, assets_dir="assets")
+app(target=main, port=8080, view= WEB_BROWSER, assets_dir="assets")
