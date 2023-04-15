@@ -1,5 +1,6 @@
+
 def urls():
-    static = "http://127.0.0.1:8000"
+    static = "http://127.0.0.1:8000/api/mpl_VM"
     data = {
         "login": f"{static}/userLogin",
         "signup": f"{static}/userSignup/",
@@ -11,6 +12,9 @@ def urls():
         "rejectRequest": f"{static}/rejectRequest/",
         "vehicleRegister" : f"{static}/vehicleRegister/",
         "getAllVehicles" : f"{static}/getAllVehicles/",
+        "sendEmailOTP"  : f"{static}/sendEmailOTP/",
+        "verifyEmailOTP"  : f"{static}/verifyEmailOTP/",
+        "updatePassword" : f"{static}/updatePassword/",
         
     }
     return data

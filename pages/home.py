@@ -8,6 +8,7 @@ from user_controls.app_bar import Navbar
 def Home(page: ft.page):
     
     userData = getUserData(page)
+    
     # print(userData)
     # home card for user actions
     # function takes value and make card to use multiple times.
@@ -55,11 +56,12 @@ def Home(page: ft.page):
             )
         )
         return homecard
+    
     homeCardData = [
         {
             "isVisible" : True,
             "avtCont" : ft.Icon(ft.icons.ACCOUNT_CIRCLE_SHARP,size=40,color=ft.colors.RED_900,), 
-            "titleText" : userData["username"], 
+            "titleText" :  userData["username"], 
             "subTitletext" : userData["empId"], 
             "btnText" : "Profile", 
             "pageTo": "/user/profile"

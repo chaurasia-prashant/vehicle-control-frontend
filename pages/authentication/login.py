@@ -32,16 +32,13 @@ def Login(page: ft.page):
         color=ft.colors.BLUE
     )
 
-    
-
     # function for handeling user login event.
 
     def login_user(e):
-
         if empId.value and password.value != "":
             try:
                 page.splash = ft.ProgressBar()
-                loginBtn.disabled =True
+                loginBtn.disabled = True
                 page.update()
                 data = {
                     "empId": empId.value,
@@ -51,30 +48,34 @@ def Login(page: ft.page):
                 url = urls()
                 url = url["login"]
                 res = requests.post(f"{url}", json=data)
-                if res.status_code == 200 and res.text != "404":
-                    resData = json.loads(res.content)
-                    setUserData(page, resData)
+                resData = json.loads(res.content)
+                if res.status_code == 200 and resData[0] == 200:
+                    setUserData(page, resData[1])
                     page.client_storage.set("isAuthenticated", True)
                     page.splash = None
-                    loginBtn.disabled =False
-                    page.update()
+                    loginBtn.disabled = False
                     page.go("/home")
+                elif resData[0] == 204:
+                    mesgText.value = "Incorrect Password"
+                    mesgText.color = ft.colors.RED_ACCENT_200
+                    page.splash = None
+                    loginBtn.disabled = False
                 else:
                     mesgText.value = "you are not a registered user"
                     mesgText.color = ft.colors.RED_ACCENT_200
-                    mesgText.update()
                     page.splash = None
-                    loginBtn.disabled =False
-                    page.update()
-            except:
+                    loginBtn.disabled = False
+            except Exception as e:
+                print(e)
                 page.splash = None
-                loginBtn.disabled =False
-                page.update()
+                loginBtn.disabled = False
                 page.go("/serverNotFound")
+
         else:
             mesgText.value = "All fields are mandatory"
             mesgText.color = ft.colors.RED_ACCENT_200
-            mesgText.update()
+        page.update()
+
     loginBtn = ft.ElevatedButton(
         "Login",
         on_click=login_user)
@@ -119,39 +120,47 @@ def Login(page: ft.page):
                                             mesgText,
                                             empId,
                                             password,
+                                            ft.Container(height = 5),
+                                            ft.Container(
+                                                col={"sm": 8, "md": 8, "xl": 6},
+                                                # margin=10,
+                                                content=ft.Row(
+                                                    [
+                                                        ft.Container(
+                                                            width=100,
+                                                            # If not registered redirect to signup.
+                                                            content=ft.ElevatedButton(
+                                                                "Signup",
+                                                                on_click=lambda _:page.go(
+                                                                    "/signup")
+                                                            ),
+                                                            expand=True
+                                                        ),
+                                                        ft.Container(
+                                                            width=30),
+                                                        ft.Container(
+
+                                                            width=100,
+                                                            # Trigger user login event
+                                                            content=loginBtn,
+                                                            expand=True
+                                                        ),
+                                                    ],
+                                                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                                                )
+                                            ),
+                                            ft.Container(height = 10),
+                                            ft.Row([
+                                                ft.Text("  Forget Password?"),
+                                                ft.TextButton("Click Here", on_click= lambda _: page.go("/forgotPassword"))
+                                            ])
 
                                         ],
                                         ),
                                     ),
 
-                                    ft.Container(
-                                        col={"sm": 8, "md": 8, "xl": 6},
-                                        margin=10,
-                                        content=ft.Row(
-                                            [
-                                                ft.Container(
-                                                    width=100,
-                                                    # If not registered redirect to signup.
-                                                    content=ft.ElevatedButton(
-                                                        "Signup",
-                                                        on_click=lambda _:page.go(
-                                                            "/signup")
-                                                    ),
-                                                    expand=True
-                                                ),
-                                                ft.Container(
-                                                    width=30),
-                                                ft.Container(
 
-                                                    width=100,
-                                                    # Trigger user login event
-                                                    content=loginBtn,
-                                                    expand=True
-                                                ),
-                                            ],
-                                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-                                        )
-                                    )
+
                                 ]
                             )
                         )

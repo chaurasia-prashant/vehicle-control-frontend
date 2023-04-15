@@ -3,10 +3,10 @@
 
 from flet import *
 from pages.home import Home
-from pages.login import Login
+from pages.authentication.login import Login
 from pages.pageNotFound import pageNotFound
 from pages.serverError import serverError
-from pages.signup import Signup
+from pages.authentication.signup import Signup
 from pages.booking_request import BookingRequest
 from pages.requestHistory import RequestHistory
 from pages.admin_control.approveRequest import ApproveRequest

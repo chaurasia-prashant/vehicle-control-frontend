@@ -11,8 +11,6 @@ from user_controls.urls import urls
 def userProfile(page: ft.page):
     
     user = getUserData(page)
-    
-    verifyEmail = ft.TextButton("Verify Email", visible= not user["verifyEmail"])
     verifyPhoneNumber = ft.TextButton("Verify PhoneNumber",visible=not user["verifyPhoneNumber"])
 
     profileView = ft.View(
@@ -41,11 +39,11 @@ def userProfile(page: ft.page):
                     ft.Row([
                         ft.Text("Contact Number : "),
                         ft.Text(user["phoneNumber"],color=ft.colors.BLUE_400,),
+                        
                         ]),
                     ft.Container(height=50),
                     ft.Row([
-                        verifyEmail,
-                        verifyPhoneNumber
+                        verifyPhoneNumber,
                         ],
                            alignment= ft.MainAxisAlignment.SPACE_BETWEEN),
                     

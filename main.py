@@ -1,12 +1,13 @@
 # imports for main file
 from flet import *
+from pages.authentication.forgotPassword import ForgotPassword
 # importing views that contain routes for all the pages.
 from pages.home import Home
-from pages.login import Login
+from pages.authentication.login import Login
 from pages.pageNotFound import pageNotFound
 from pages.profile import userProfile
 from pages.serverError import serverError
-from pages.signup import Signup
+from pages.authentication.signup import Signup
 from pages.booking_request import BookingRequest
 from pages.requestHistory import RequestHistory
 from pages.admin_control.approveRequest import ApproveRequest
@@ -31,7 +32,7 @@ def main(page: Page):
         
         routeParm = page.route
         match routeParm:
-            case "/" : page.views.append(Login(page))
+            case "/login" : page.views.append(Login(page))
             case "/home" : page.views.append(Home(page))
             case "/signup": page.views.append(Signup(page))
             case "/bookingRequest": page.views.append(BookingRequest(page))
@@ -41,6 +42,7 @@ def main(page: Page):
             case "/user/profile" : page.views.append(userProfile(page))
             case "/pageNotFound" : page.views.append(pageNotFound(page))
             case "/serverNotFound" : page.views.append(serverError(page))
+            case "/forgotPassword" : page.views.append(ForgotPassword(page))
                  
     page.update()
 
@@ -62,7 +64,7 @@ def main(page: Page):
     if isAuth:
         page.go("/home")
     else:
-        page.go("/")
+        page.go("/login")
 
 
 # refrencing app to run the main file.
