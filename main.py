@@ -1,5 +1,5 @@
 # imports for main file
-from flet import *
+import flet as ft
 from pages.authentication.forgotPassword import ForgotPassword
 # importing views that contain routes for all the pages.
 from pages.home import Home
@@ -17,8 +17,8 @@ from pages.admin_control.vehicleDetails import VehicleDetail
 # Views that have control over all other pages is linked to this function
 
 
-def main(page: Page):
-    page.bgcolor = colors.DEEP_PURPLE_100
+def main(page: ft.Page):
+    page.bgcolor = ft.colors.DEEP_PURPLE_100
     page.title = "Book my trip"
     page.theme_mode = "dark"
     
@@ -43,6 +43,7 @@ def main(page: Page):
             case "/pageNotFound" : page.views.append(pageNotFound(page))
             case "/serverNotFound" : page.views.append(serverError(page))
             case "/forgotPassword" : page.views.append(ForgotPassword(page))
+            case _: page.views.append(pageNotFound(page))
                  
     page.update()
 
@@ -69,4 +70,5 @@ def main(page: Page):
 
 # refrencing app to run the main file.
 # setting ports , view and asset directory
-app(target=main, port=8080, view= WEB_BROWSER, assets_dir="assets")
+if __name__ == "__main__":
+    ft.app(target=main, port=8050, view= ft.WEB_BROWSER, assets_dir="assets")

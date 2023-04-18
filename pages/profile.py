@@ -18,7 +18,10 @@ def userProfile(page: ft.page):
         appbar=Navbar(page, ft),
         bgcolor=ft.colors.DEEP_PURPLE_100,
         controls=[
-            ft.Container(
+            ft.ResponsiveRow(
+                controls =[
+                ft.Container(
+                col={"sm": 8, "md": 6, "xl": 4},    
                 width = .5*page.width,
                 border_radius=10,
                 bgcolor=ft.colors.BLACK,
@@ -49,6 +52,8 @@ def userProfile(page: ft.page):
                     
                 ])
             )
+            ],
+                alignment= ft.MainAxisAlignment.CENTER)
         ],
         # vertical_alignment=ft.MainAxisAlignment.CENTER,
         horizontal_alignment= ft.CrossAxisAlignment.CENTER

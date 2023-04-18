@@ -34,3 +34,11 @@ def getAllVehicles():
         return json.loads(res.content)
     except Exception as e:
         return None
+def getRegisteredUser():
+        try:
+            url = urls()
+            url = url["allId"]
+            response = requests.get(f"{url}")
+            return json.loads(response.content)
+        except:
+            pass
