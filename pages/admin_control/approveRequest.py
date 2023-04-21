@@ -76,13 +76,6 @@ def ApproveRequest(page: ft.page):
         errMessage.update()
         data = {
             "vehicleAlloted": vehicleDetail.value,
-            # "vehicleNumber": "",
-            # "bookingNumber":"",
-            # "tripDate" : "",
-            # "startTime": "",
-            # "endTime" : "",
-            # "tripStatus": True,
-            # "tripCanceled": False,
             "remark": remark.value,
         }
         if vehicleDetail.value and remark.value != "":
@@ -148,9 +141,37 @@ def ApproveRequest(page: ft.page):
         else:
             errMessage.visible =True
             errMessage.update()
+            
+    #Dialoge Box
+    def closeDialoge(e):
+        dlg_modal.open = False
+        page.update()
+        
+    dlg_modal = ft.AlertDialog(
+            modal=True,
+            title=ft.Text("Request Details", size=15, color=ft.colors.BLUE_300),
+            actions=[
+                ft.TextButton("Close", on_click=closeDialoge),
+            ],
+            actions_alignment=ft.MainAxisAlignment.END,
+            # on_dismiss=lambda e: print("Modal dialog dismissed!"),
+        )
+    
+    def openDialoge (e,empid, department, reason):
+        dlg_modal.content = ft.Container(
+            content= ft.ResponsiveRow([
+                ft.Text(f"Employee ID : {empid}"),
+                ft.Text(f"Department : {department}"),
+                ft.Text(f"Reason : {reason}")
+            ])
+        )
+        page.dialog = dlg_modal
+        dlg_modal.open = True
+        page.update()
+        
 
     # Approve request's card.
-    def requestCard(reqId,reqBy,origin,destination,start,end,date):
+    def requestCard(reqId,reqBy,origin,destination,start,end,date,department,reason,id):
         id1 = 1
         id2 = 0
         approveRequestsCard = ft.Card(
@@ -164,8 +185,13 @@ def ApproveRequest(page: ft.page):
                             #     size=50,
                             #     color=ft.colors.GREEN,
                             # ),
-                            title=ft.Text(
-                                reqBy),
+                            title=ft.Row([
+                                
+                                ft.Text(reqBy),
+                                ft.IconButton(icon= ft.icons.INFO,icon_color=ft.colors.WHITE, on_click= lambda e: openDialoge(e,id,department,reason))
+                            ],
+                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                            ),
                             subtitle=ft.ListTile(
                                 title=ft.Row([
                                     ft.Text(origin,
@@ -245,7 +271,10 @@ def ApproveRequest(page: ft.page):
                         destination= res["destination"],
                         start= timeTxt[startTime],
                         end= timeTxt[endTime],
-                        date= res["tripDate"]
+                        date= res["tripDate"],
+                        id =res["empId"],
+                        department= res["userDepartment"],
+                        reason= res["reason"],
                         
                     ))
     else:
@@ -263,8 +292,10 @@ def ApproveRequest(page: ft.page):
     approveScreen = ft.Container(
         visible=False,
         alignment=ft.alignment.center,
-        content=ft.Container(
-            width=.3*page.width,
+        content=ft.ResponsiveRow([
+            ft.Container(
+            col={"xs": 10,"sm": 6, "xl": 4},
+            width=.8*page.width,
             bgcolor=ft.colors.BLACK87,
             padding=15,
             border_radius=10,
@@ -288,6 +319,9 @@ def ApproveRequest(page: ft.page):
             ],
             )
         )
+            ],
+                                 alignment=ft.MainAxisAlignment.CENTER
+                                 ),
     )
 
     approveMainScreen = ft.ResponsiveRow(

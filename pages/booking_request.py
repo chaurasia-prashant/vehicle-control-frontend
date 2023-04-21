@@ -195,7 +195,8 @@ def BookingRequest(page: ft.page):
                                 ft.ElevatedButton(
                                     "Send Travel Request",
                                     # expand =True,
-                                    width=.4*page.width - 30,
+                                    col={"xs": 8,"sm": 6, "xl": 6},
+                                    width=.8*page.width - 30,
                                     bgcolor=ft.colors.WHITE,
                                     color=ft.colors.BLUE,
                                     on_click=book_request,

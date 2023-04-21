@@ -27,8 +27,8 @@ def VehicleDetail(page: ft.page):
         vehicalBookingScreen.update()
 
     def showAddVehicleScreen(e):
-        allVehicleScreen.visible = False,
-        allVehicleScreen.update()
+        # allVehicleScreen.visible = False,
+        # allVehicleScreen.update()
         addVehicleScreen.visible = None
         addVehicleScreen.visible = True
         addVehicleScreen.update()
@@ -209,6 +209,12 @@ def VehicleDetail(page: ft.page):
                     addVehicleScreen.visible = None
                     addVehicleScreen.visible = False
                     addVehicleScreen.update()
+                    allVehicleScreen.controls.append(vehicleDetailScreen(
+                    vechNumber=data["vehicleNumber"],
+                    vechPhoneNumber=data["vehiclePhoneNumber"],
+                    data=None
+                    ))
+                    allVehicleScreen.update()
                 else:
                     vehicleRegisterMessage.value = "Something Went Wrong"
                     vehicleRegisterMessage.color = ft.colors.RED_500
@@ -225,7 +231,8 @@ def VehicleDetail(page: ft.page):
             vehicleRegisterMessage.color = ft.colors.RED_500
             vehicleRegisterMessage.visible = True
             vehicleRegisterMessage.update()
-
+        page.update()
+            
     # Add a vehicle screen
     addVehicleScreen = ft.Container(
         visible=False,
@@ -274,6 +281,7 @@ def VehicleDetail(page: ft.page):
         content=ft.Column([
             ft.Container(
                 height=.65*page.height,
+                col={"xs": 10, "sm": 0, "xl": 0},
                 content=dataCol,),
             # ft.Container(height= 15),
             ft.ElevatedButton(
@@ -288,18 +296,13 @@ def VehicleDetail(page: ft.page):
 
     # vehicle's screen to display all vehicle registered.
     allVehicleScreen = ft.ListView()
-
-    def allVehicalList(e):
-        allVehicleScreen.controls = None
-        allVehicleScreen.update()
-        vehicles = getAllVehicles()
-        for vech in vehicles:
-            allVehicleScreen.controls.append(vehicleDetailScreen(
-                vechNumber=vech["vehicleNumber"],
-                vechPhoneNumber=vech["vehiclePhoneNumber"],
-                data=vech["bookedTime"]
+    vehicles = getAllVehicles()
+    for vech in vehicles:
+        allVehicleScreen.controls.append(vehicleDetailScreen(
+            vechNumber=vech["vehicleNumber"],
+            vechPhoneNumber=vech["vehiclePhoneNumber"],
+            data=vech["bookedTime"]
             ))
-        page.update()
 
     vehicleScreeen = ft.ResponsiveRow(
         controls=[
@@ -309,15 +312,15 @@ def VehicleDetail(page: ft.page):
 
                 content=ft.Column([
                     ft.Row([
-                        ft.ElevatedButton(
-                            "Show Vehicles", expand=True, on_click=allVehicalList),
+                        # ft.ElevatedButton(
+                        #     "Show Vehicles", expand=True, on_click=allVehicalList),
                         ft.ElevatedButton(
                             "Add Vehicles", expand=True, on_click=showAddVehicleScreen),
                     ]),
                     ft.Container(height=1, width=page.width,
                                  bgcolor=ft.colors.BLACK),
                     ft.Container(
-                        height = .95*page.height,
+                        height = .93*page.height,
                         content=allVehicleScreen),
                 ])
             ),
@@ -355,7 +358,8 @@ def VehicleDetail(page: ft.page):
                     vehicalBookingScreen,
                     addVehicleScreen,
                 ]
-            )
+            ),
+            
         ]
     )
 

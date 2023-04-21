@@ -21,6 +21,7 @@ def main(page: ft.Page):
     page.bgcolor = ft.colors.DEEP_PURPLE_100
     page.title = "Book my trip"
     page.theme_mode = "dark"
+    # page.on_error = page.views.append(serverError(page))
     
     
 
@@ -29,7 +30,6 @@ def main(page: ft.Page):
     def route_change(route):
         page.views.clear()
         # page.views.append(Home(page))
-        
         routeParm = page.route
         match routeParm:
             case "/login" : page.views.append(Login(page))
@@ -63,7 +63,7 @@ def main(page: ft.Page):
     # rroute to the first page on startup
     isAuth = page.client_storage.get("isAuthenticated")
     if isAuth:
-        page.go("/home")
+        page.go("/bookingRequest")
     else:
         page.go("/login")
 
