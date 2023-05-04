@@ -1,2 +1,2 @@
 # vehicle-control-frontend
-A website for vehicle movement in MPL.
+Frontend for vehicle control. Codes written in python flet.
