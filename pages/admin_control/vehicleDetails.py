@@ -185,6 +185,18 @@ def VehicleDetail(page: ft.page):
 
     vehicleNumber = ft.TextField(label="Vehicle Number",border_color=ft.colors.WHITE,focused_border_color=ft.colors.BLUE)
     vehiclePhoneNumber = ft.TextField(label="Phone Number",border_color=ft.colors.WHITE,focused_border_color=ft.colors.BLUE)
+    vehicleType = ft.Dropdown(
+        label="Select for department vehicle",
+        # value= None,
+        options=[ft.dropdown.Option("IMD"),
+                 ft.dropdown.Option("CMD"),
+                 ft.dropdown.Option("EMD"),
+                 ft.dropdown.Option("OPN"),
+                 ft.dropdown.Option("ADMIN"),
+                 ],
+        border_color=ft.colors.WHITE,
+        focused_border_color=ft.colors.BLUE
+    )
     vehicleRegisterMessage = ft.Text(visible=False)
 
     def addVehicle(e):
@@ -195,10 +207,11 @@ def VehicleDetail(page: ft.page):
             url = url["vehicleRegister"]
             data = {
                 "vehicleNumber": vehicleNumber.value,
+                "vehicleType" : vehicleType.value,
                 "vehiclePhoneNumber": vehiclePhoneNumber.value,
                 # "bookedTime" :
             }
-            if vehicleNumber.value and vehiclePhoneNumber.value != "":
+            if vehicleType.value != None and vehicleNumber.value and vehiclePhoneNumber.value   != "":
                 res = requests.post(f"{url}", json=data)
                 if res.status_code == 200 and res.text != "404":
                     vehicleRegisterMessage.value = res.text
@@ -249,6 +262,8 @@ def VehicleDetail(page: ft.page):
             vehicleNumber,
             ft.Container(height=10),
             vehiclePhoneNumber,
+            ft.Container(height=10),
+            vehicleType,
             ft.Container(height=10),
             ft.Row([
                 ft.ElevatedButton(
@@ -320,7 +335,7 @@ def VehicleDetail(page: ft.page):
                     ft.Container(height=1, width=page.width,
                                  bgcolor=ft.colors.BLACK),
                     ft.Container(
-                        height = .93*page.height,
+                        height = .95*page.height,
                         content=allVehicleScreen),
                 ])
             ),

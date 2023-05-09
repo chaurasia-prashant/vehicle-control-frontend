@@ -63,7 +63,7 @@ def main(page: ft.Page):
     # rroute to the first page on startup
     isAuth = page.client_storage.get("isAuthenticated")
     if isAuth:
-        page.go("/bookingRequest")
+        page.go("/home")
     else:
         page.go("/login")
 
@@ -71,4 +71,4 @@ def main(page: ft.Page):
 # refrencing app to run the main file.
 # setting ports , view and asset directory
 if __name__ == "__main__":
-    ft.app(target=main, port=8050, view= ft.WEB_BROWSER, assets_dir="assets")
+    ft.app(target=main, port=80800, view= ft.WEB_BROWSER, assets_dir="assets")
