@@ -313,11 +313,12 @@ def VehicleDetail(page: ft.page):
     allVehicleScreen = ft.ListView()
     vehicles = getAllVehicles()
     for vech in vehicles:
-        allVehicleScreen.controls.append(vehicleDetailScreen(
-            vechNumber=vech["vehicleNumber"],
-            vechPhoneNumber=vech["vehiclePhoneNumber"],
-            data=vech["bookedTime"]
-            ))
+        if vech["vehicleType"] == "ADMIN":
+            allVehicleScreen.controls.append(vehicleDetailScreen(
+                vechNumber=vech["vehicleNumber"],
+                vechPhoneNumber=vech["vehiclePhoneNumber"],
+                data=vech["bookedTime"]
+                ))
 
     vehicleScreeen = ft.ResponsiveRow(
         controls=[

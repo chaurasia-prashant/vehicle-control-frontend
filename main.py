@@ -1,5 +1,6 @@
 # imports for main file
 import flet as ft
+from pages.admin_control.adminPage import AdminControlPage
 from pages.authentication.forgotPassword import ForgotPassword
 # importing views that contain routes for all the pages.
 from pages.home import Home
@@ -43,6 +44,7 @@ def main(page: ft.Page):
             case "/pageNotFound" : page.views.append(pageNotFound(page))
             case "/serverNotFound" : page.views.append(serverError(page))
             case "/forgotPassword" : page.views.append(ForgotPassword(page))
+            case "/adminControlPage" : page.views.append(AdminControlPage(page))
             case _: page.views.append(pageNotFound(page))
                  
     page.update()
@@ -63,7 +65,7 @@ def main(page: ft.Page):
     # rroute to the first page on startup
     isAuth = page.client_storage.get("isAuthenticated")
     if isAuth:
-        page.go("/home")
+        page.go("/adminControlPage")
     else:
         page.go("/login")
 

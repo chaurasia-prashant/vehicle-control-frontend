@@ -15,6 +15,11 @@ def urls():
         "sendEmailOTP"  : f"{static}/sendEmailOTP/",
         "verifyEmailOTP"  : f"{static}/verifyEmailOTP/",
         "updatePassword" : f"{static}/updatePassword/",
-        
+        "backupBooking" : f"{static}/backupBooking/",
+        "getBookingDump" : f"{static}/getBookingDump/",
+        "assignRole" : f"{static}/assignRole/",
+        "roleReject" : f"{static}/roleReject/",
+        "addAdmin" : f"{static}/addAdmin/",
+        "removeAdmin" : f"{static}/removeAdmin/",
     }
     return data

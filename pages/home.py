@@ -88,21 +88,21 @@ def Home(page: ft.page):
         {
             "isVisible" : userData["isAdmin"],
             "avtCont" : ft.Icon(ft.icons.ADMIN_PANEL_SETTINGS,size=30,color=ft.colors.RED_900,), 
-            "titleText" : "Approve Request", 
+            "titleText" : "Admin Control", 
             "subTitletext" : None, 
-            "btnText" : "Approve", 
-            "pageTo": "/approveRequest"
+            "btnText" : "Enter", 
+            "pageTo": "/adminControlPage"
             
         },
-        {
-            "isVisible" : userData["isAdmin"],
-            "avtCont" : ft.Icon(ft.icons.CAR_CRASH_SHARP,size=40,color=ft.colors.RED_900,), 
-            "titleText" : "Vehicle Details", 
-            "subTitletext" : None, 
-            "btnText" : "Status", 
-            "pageTo": "/vehicleDetail"
+        # {
+        #     "isVisible" : userData["isAdmin"],
+        #     "avtCont" : ft.Icon(ft.icons.CAR_CRASH_SHARP,size=40,color=ft.colors.RED_900,), 
+        #     "titleText" : "Vehicle Details", 
+        #     "subTitletext" : None, 
+        #     "btnText" : "Status", 
+        #     "pageTo": "/vehicleDetail"
             
-        }
+        # }
     ]
     
     homeView = ft.ListView()

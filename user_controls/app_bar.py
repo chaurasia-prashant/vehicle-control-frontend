@@ -6,16 +6,17 @@ from localStorage.clientStorage import resetUserData
 # home screen from any page and logout activity.
 
 
-def Navbar(page, ft=ft):
 
+def Navbar(page, ft=ft):
+    
     def logOut(e):
         page.client_storage.set("isAuthenticated", False)
         resetUserData(page)
         page.go("/login")
 
     NavBar = ft.AppBar(
-        leading=ft.Icon(ft.icons.TAG_FACES_ROUNDED),
-        leading_width=40,
+        # leading=ft.IconButton(ft.icons.ARROW_BACK, on_click=lambda _: page.go(routes[-2])),
+        # leading_width=40,
         title=ft.Text("BOOK MY TRIP"),
         center_title=False,
         bgcolor=ft.colors.SURFACE_VARIANT,
