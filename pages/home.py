@@ -94,15 +94,24 @@ def Home(page: ft.page):
             "pageTo": "/adminControlPage"
             
         },
-        # {
-        #     "isVisible" : userData["isAdmin"],
-        #     "avtCont" : ft.Icon(ft.icons.CAR_CRASH_SHARP,size=40,color=ft.colors.RED_900,), 
-        #     "titleText" : "Vehicle Details", 
-        #     "subTitletext" : None, 
-        #     "btnText" : "Status", 
-        #     "pageTo": "/vehicleDetail"
+        {
+            "isVisible" : userData["isOwner"] and not userData["isAdmin"],
+            "avtCont" : ft.Icon(ft.icons.ADMIN_PANEL_SETTINGS,size=40,color=ft.colors.RED_900,), 
+            "titleText" : "Approve Booking Request", 
+            "subTitletext" : None, 
+            "btnText" : "Approve", 
+            "pageTo": "/approveRequest"
             
-        # }
+        },
+        {
+            "isVisible" : userData["isOwner"] and not userData["isAdmin"],
+            "avtCont" : ft.Icon(ft.icons.CAR_CRASH_ROUNDED,size=40,color=ft.colors.RED_900,), 
+            "titleText" : "Vehicle Booking Status", 
+            "subTitletext" : None, 
+            "btnText" : "Check", 
+            "pageTo": "/vehicleDetail"
+            
+        }
     ]
     
     homeView = ft.ListView()

@@ -5,6 +5,7 @@ import flet as ft
 import requests
 from database.getFromDb import getAllVehicles
 from database.staticData import secondsToTime
+from localStorage.clientStorage import getUserData
 from user_controls.app_bar import Navbar
 from user_controls.urls import urls
 
@@ -15,6 +16,7 @@ from user_controls.urls import urls
 
 
 def VehicleDetail(page: ft.page):
+    currentUser = getUserData(page)
     timeText = secondsToTime()
 
     def closevehicleScreen(e):
@@ -313,13 +315,19 @@ def VehicleDetail(page: ft.page):
     allVehicleScreen = ft.ListView()
     vehicles = getAllVehicles()
     for vech in vehicles:
-        if vech["vehicleType"] == "ADMIN":
+        if currentUser["isAdmin"]:
             allVehicleScreen.controls.append(vehicleDetailScreen(
                 vechNumber=vech["vehicleNumber"],
                 vechPhoneNumber=vech["vehiclePhoneNumber"],
                 data=vech["bookedTime"]
                 ))
-
+        elif currentUser["isOwner"]:
+            if vech["vehicleType"] == currentUser["department"]:
+                allVehicleScreen.controls.append(vehicleDetailScreen(
+                    vechNumber=vech["vehicleNumber"],
+                    vechPhoneNumber=vech["vehiclePhoneNumber"],
+                    data=vech["bookedTime"]
+                    ))
     vehicleScreeen = ft.ResponsiveRow(
         controls=[
             ft.Container(
@@ -332,7 +340,9 @@ def VehicleDetail(page: ft.page):
                         #     "Show Vehicles", expand=True, on_click=allVehicalList),
                         ft.ElevatedButton(
                             "Add Vehicles", expand=True, on_click=showAddVehicleScreen),
-                    ]),
+                    ],
+                           visible= currentUser["isAdmin"] and not currentUser["isOwner"],
+                           ),
                     ft.Container(height=1, width=page.width,
                                  bgcolor=ft.colors.BLACK),
                     ft.Container(

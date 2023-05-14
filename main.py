@@ -1,4 +1,5 @@
 # imports for main file
+import time
 import flet as ft
 from pages.admin_control.adminPage import AdminControlPage
 from pages.authentication.forgotPassword import ForgotPassword
@@ -25,33 +26,56 @@ def main(page: ft.Page):
     # page.on_error = page.views.append(serverError(page))
     
     
+    def close_dlg(e):
+        dlg_modal.open = False
+        page.update()
+
+    dlg_modal = ft.AlertDialog(
+        modal=True,
+        title=ft.Text("Something Went Wrong!"),
+        content=ft.Text("Check Your Internet Connection and try again."),
+        actions=[
+            ft.TextButton("Close", on_click=close_dlg),
+        ],
+        actions_alignment=ft.MainAxisAlignment.END,
+    )
+
+    def open_dlg_modal(e):
+        page.dialog = dlg_modal
+        dlg_modal.open = True
+        page.update()
+        time.sleep(1.5)
+        close_dlg(e)
+    
 
 
     # function for the route change. It calls a views_handler to change for the routes.
     def route_change(route):
-        page.views.clear()
-        # page.views.append(Home(page))
-        routeParm = page.route
-        match routeParm:
-            case "/login" : page.views.append(Login(page))
-            case "/home" : page.views.append(Home(page))
-            case "/signup": page.views.append(Signup(page))
-            case "/bookingRequest": page.views.append(BookingRequest(page))
-            case "/requestHistory": page.views.append(RequestHistory(page))
-            case "/approveRequest": page.views.append(ApproveRequest(page))
-            case "/vehicleDetail": page.views.append(VehicleDetail(page))
-            case "/user/profile" : page.views.append(userProfile(page))
-            case "/pageNotFound" : page.views.append(pageNotFound(page))
-            case "/serverNotFound" : page.views.append(serverError(page))
-            case "/forgotPassword" : page.views.append(ForgotPassword(page))
-            case "/adminControlPage" : page.views.append(AdminControlPage(page))
-            case _: page.views.append(pageNotFound(page))
-                 
+        try:
+            page.views.clear()
+            # page.views.append(Home(page))
+            routeParm = page.route
+            match routeParm:
+                case "/login" : page.views.append(Login(page))
+                case "/home" : page.views.append(Home(page))
+                case "/signup": page.views.append(Signup(page))
+                case "/bookingRequest": page.views.append(BookingRequest(page))
+                case "/requestHistory": page.views.append(RequestHistory(page))
+                case "/approveRequest": page.views.append(ApproveRequest(page))
+                case "/vehicleDetail": page.views.append(VehicleDetail(page))
+                case "/user/profile" : page.views.append(userProfile(page))
+                case "/pageNotFound" : page.views.append(pageNotFound(page))
+                case "/serverNotFound" : page.views.append(serverError(page))
+                case "/forgotPassword" : page.views.append(ForgotPassword(page))
+                case "/adminControlPage" : page.views.append(AdminControlPage(page))
+                case _: page.views.append(pageNotFound(page))
+        except Exception as e:
+            print(e)
+            open_dlg_modal(e)  
+            page.go("/home")      
     page.update()
 
     # pop function for route if user wants to go back.
-    
-
     
     
     def view_pop(view):
@@ -65,7 +89,7 @@ def main(page: ft.Page):
     # rroute to the first page on startup
     isAuth = page.client_storage.get("isAuthenticated")
     if isAuth:
-        page.go("/adminControlPage")
+        page.go("/home")
     else:
         page.go("/login")
 

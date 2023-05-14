@@ -5,6 +5,7 @@ import flet as ft
 import requests
 from database.getFromDb import getAllBookkingRequest, getAllVehicles
 from database.staticData import secondsToTime
+from localStorage.clientStorage import getUserData
 from user_controls.app_bar import Navbar
 from user_controls.urls import urls
 
@@ -14,22 +15,41 @@ from user_controls.urls import urls
 
 
 def AdminControlPage(page: ft.page):
-    
-    
-    
-    
+
+    def close_banner(e):
+        page.banner.open = False
+        page.update()
+
+    message = ft.Text(color=ft.colors.BLACK)
+
+    page.banner = ft.Banner(
+        bgcolor=ft.colors.AMBER_100,
+        leading=ft.Icon(ft.icons.WARNING_AMBER_ROUNDED,
+                        color=ft.colors.AMBER, size=40),
+        content=message,
+        actions=[
+            ft.TextButton("Close", on_click=close_banner),
+        ],
+    )
+
+    def show_banner_click(e):
+        page.banner.open = True
+        page.update()
+        time.sleep(2)
+        close_banner(e)
+
     def close_dlg(e):
         getBookingDump.open = False
         assignRoleWindow.visible = False
         page.update()
-        
-    moy  = ft.Dropdown(
-            label="Select Date",
-            label_style= ft.TextStyle(size=15),
-            height=58,
-            text_size= 15,
-            expand= True
-        )
+
+    moy = ft.Dropdown(
+        label="Select Date",
+        label_style=ft.TextStyle(size=15),
+        height=58,
+        text_size=15,
+        expand=True
+    )
     start_date = datetime.date.today().replace(day=30)
     end_date = datetime.date(2023, 1, 1)
 
@@ -37,27 +57,31 @@ def AdminControlPage(page: ft.page):
         date_str = start_date.strftime('%m-%Y')
         moy.options.append(ft.dropdown.Option(date_str))
         start_date = start_date - datetime.timedelta(days=31)
-        
-    
+
     def getBookingDump(e):
         try:
             url = urls()
             requests.post(url["backupBooking"])
             data = {
-                "backupDate" :moy.value
+                "backupDate": moy.value
             }
-            res = requests.post(url["getBookingDump"], json = data)
+            res = requests.post(url["getBookingDump"], json=data)
             resdata = json.loads(res.content)
-            if res.status_code == 200 and resdata[0]== 200:
-                print(resdata[1])
+            if res.status_code == 200 and resdata[0] == 200:
+                # print(resdata[1])
                 close_dlg(e)
             else:
-                print("error")    
-            
+                close_dlg(e)
+                message.value = "Something went wrong! Try again."
+                message.update()
+                show_banner_click(e)
+
         except Exception as e:
-            print(e)
-            
-    
+            close_dlg(e)
+            message.value = "Something went wrong! Try again."
+            message.update()
+            show_banner_click(e)
+
     getBookingDump = ft.AlertDialog(
         modal=True,
         title=ft.Text("Select Month"),
@@ -68,56 +92,76 @@ def AdminControlPage(page: ft.page):
         ],
         actions_alignment=ft.MainAxisAlignment.END,
     )
-    
+
     def open_dlg_modal(e):
         page.dialog = getBookingDump
         getBookingDump.open = True
         page.update()
-        
-    
-    
+
+    def validateRoleAssign():
+        currentuser = getUserData(page)
+        if currentuser["empId"] == userID.value:
+            if role.value == "Admin Approver":
+                message.value = "Cannot add or remove yourself as admin"
+                message.update()
+                return False
+            elif role.value == "Reject Admin Approver":
+                message.value = "Cannot add or remove yourself as admin"
+                message.update()
+                return False
+            elif role.value == None:
+                message.value = "Please select action"
+                message.update()
+                return False
+            else:
+                return True
+        else:
+            return True
+
     def roleAssignHandler(e):
         try:
-            selection = {
-                "Department Approver" : "assignRole",
-                "Admin Approver": "addAdmin",
-                "Reject Department Approver": "roleReject",
-                "Reject Admin Approver": "removeAdmin",
-            }
-            data = {
-                "empId" : userID.value
-            }
-            opt = selection[role.value]
-            url = urls()
-            url=url[opt]
-            res = requests.post(f"{url}{userID.value}", json=data)
-            if res.status_code == 200 and res.text == "200":
-                data = res.content
-                userID.value = None
-                role.value = None
-                assignRoleWindow.visible = False
-                page.update()
-                
-                
+
+            if validateRoleAssign():
+
+                selection = {
+                    "Department Approver": "assignRole",
+                    "Admin Approver": "addAdmin",
+                    "Reject Department Approver": "roleReject",
+                    "Reject Admin Approver": "removeAdmin",
+                }
+                data = {
+                    "empId": userID.value
+                }
+                opt = selection[role.value]
+                url = urls()
+                url = url[opt]
+                res = requests.post(f"{url}{userID.value}", json=data)
+                if res.status_code == 200 and res.text == "200":
+                    data = res.content
+                    userID.value = None
+                    role.value = None
+                    assignRoleWindow.visible = False
+                    page.update()
+            else:
+                show_banner_click(e)
+
         except Exception as e:
             print(e)
-    
-    
 
     userID = ft.TextField(
         label="Enter Employee ID",
         color=ft.colors.WHITE,
         height=50,
     )
-    
+
     role = ft.Dropdown(
-        label= "Select Action",
+        label="Select Action",
         color=ft.colors.WHITE,
-        options= [ft.dropdown.Option("Department Approver"),
-                  ft.dropdown.Option("Admin Approver"),
-                  ft.dropdown.Option("Reject Department Approver"),
-                  ft.dropdown.Option("Reject Admin Approver"),
-                  ]
+        options=[ft.dropdown.Option("Department Approver"),
+                 ft.dropdown.Option("Admin Approver"),
+                 ft.dropdown.Option("Reject Department Approver"),
+                 ft.dropdown.Option("Reject Admin Approver"),
+                 ]
     )
 
     assignRoleWindow = ft.Container(
@@ -133,14 +177,13 @@ def AdminControlPage(page: ft.page):
                 "Done",
                 on_click=roleAssignHandler
             ),
-            
+
         ])
     )
 
     def assignRoleVisible(e):
         assignRoleWindow.visible = True
         assignRoleWindow.update()
-        
 
     def controlbadges(txt, color, goto):
         badge = ft.Container(
@@ -163,20 +206,20 @@ def AdminControlPage(page: ft.page):
             padding=10,
             col={"sm": 6, "xl": 4},
             height=.9*page.height,
-            content=ft.Column([
+            content=ft.ListView([
                 controlbadges(
                     "Approve User Booking Request",
                     ft.colors.BLUE_300,
                     "/approveRequest"
                 ),
-                ft.Container(height=20),
+                # ft.Container(height=20),
                 controlbadges(
                     "Get Vehicle Booking Status",
                     ft.colors.DEEP_PURPLE_300,
                     "/vehicleDetail"
                 ),
 
-                ft.Container(height=20),
+                # ft.Container(height=20),
                 ft.Container(
                     width=.4*page.width,
                     content=ft.ElevatedButton(
@@ -188,7 +231,7 @@ def AdminControlPage(page: ft.page):
 
                     )
                 ),
-                ft.Container(height=20),
+                # ft.Container(height=20),
                 ft.Container(
                     width=.4*page.width,
                     content=ft.ElevatedButton(
@@ -200,9 +243,11 @@ def AdminControlPage(page: ft.page):
 
                     )
                 ),
-                assignRoleWindow
+                ft.Container(content=assignRoleWindow),
 
-            ])
+
+            ],
+                spacing=20)
         ),
         ft.Container(
             # height=500,

@@ -1,0 +1,10 @@
+Error in banner type in New Trip
+Error implement in asign role
+Get Excle dump in booking backup (create excle and show a download button)
+Back button in appbar
+phonenumber validation in add vehicle
+edit option in booking request
+edit option in add vehicle
+change approval status
+all error handling
+netowr connection checking

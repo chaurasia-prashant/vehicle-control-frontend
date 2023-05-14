@@ -175,7 +175,7 @@ def BookingRequest(page: ft.page):
             endTime = int(ehour.value)*3600 + int(eminut.value)*60
             if endTime > startTime:
                 try:
-                    vehicleType  = None
+                    vehicleType  = "ADMIN"
                     page.splash =ft.ProgressBar()
                     page.update()
                     if isDepartmentVehicle.value:

@@ -4,6 +4,7 @@ import flet as ft
 import requests
 from database.getFromDb import getAllBookkingRequest, getAllVehicles
 from database.staticData import secondsToTime
+from localStorage.clientStorage import getUserData
 from user_controls.app_bar import Navbar
 from user_controls.urls import urls
 
@@ -12,14 +13,15 @@ from user_controls.urls import urls
 # To approve a request admin have to fill vehicle details and remarks.
 
 def ApproveRequest(page: ft.page):
-    
+    currentUser = getUserData(page)
     allRequests = getAllBookkingRequest()
     allVehicles = getAllVehicles()
     timeTxt = secondsToTime()
     # function to enable approving form for admin.
     
     
-    def showFinalApprovePopUp(e,reqId,id):
+    def showFinalApprovePopUp(e,reqId,id, vechType):
+        vehicalListUpdate(e,vechType)
         if id == 1:
             actionButton.text ="Final Approve"
             actionButton.on_click = approveByAdmin
@@ -63,10 +65,14 @@ def ApproveRequest(page: ft.page):
                     border_color=ft.colors.BLUE,
                 )
     
-    if allVehicles != None:
-        for vech in allVehicles:
-            vehicleDetail.options.append(ft.dropdown.Option(vech["vehicleNumber"]))
-    
+    def vehicalListUpdate(e,vechType):
+        vehicleDetail.options.clear()
+        if allVehicles != None:
+            for vech in allVehicles:
+                if vech["vehicleType"] == vechType:
+                    vehicleDetail.options.append(ft.dropdown.Option(vech["vehicleNumber"]))
+            page.update()
+        
     errMessage =ft.Text(
         "All fields are mandatory",
         visible=False,     
@@ -157,21 +163,33 @@ def ApproveRequest(page: ft.page):
             # on_dismiss=lambda e: print("Modal dialog dismissed!"),
         )
     
-    def openDialoge (e,empid, department, reason):
-        dlg_modal.content = ft.Container(
-            content= ft.ResponsiveRow([
-                ft.Text(f"Employee ID : {empid}"),
-                ft.Text(f"Department : {department}"),
-                ft.Text(f"Reason : {reason}")
-            ])
-        )
+    def openDialoge (e,empid, department, reason,isGuest,guestname,guestMobileNum):
+        if not isGuest:
+            dlg_modal.content = ft.Container(
+                content= ft.ResponsiveRow([
+                    ft.Text(f"Employee ID : {empid}"),
+                    ft.Text(f"Department : {department}"),
+                    ft.Text(f"Reason : {reason}")
+                ])
+            )
+        else:
+            dlg_modal.content = ft.Container(
+                content= ft.ResponsiveRow([
+                    ft.Text("Booking For Guest"),
+                    ft.Text(f"Employee ID : {empid}"),
+                    ft.Text(f"Department : {department}"),
+                    ft.Text(f"Guest name : {guestname}"),
+                    ft.Text(f"Guest Phone Number : {guestMobileNum}"),
+                    ft.Text(f"Reason : {reason}")
+                ])
+            )
         page.dialog = dlg_modal
         dlg_modal.open = True
         page.update()
         
 
     # Approve request's card.
-    def requestCard(reqId,reqBy,origin,destination,start,end,date,department,reason,id):
+    def requestCard(reqId,reqBy,origin,destination,start,end,date,department,reason,id,isGuest,guestname,guestMobileNum,vechType):
         id1 = 1
         id2 = 0
         approveRequestsCard = ft.Card(
@@ -188,7 +206,7 @@ def ApproveRequest(page: ft.page):
                             title=ft.Row([
                                 
                                 ft.Text(reqBy),
-                                ft.IconButton(icon= ft.icons.INFO,icon_color=ft.colors.WHITE, on_click= lambda e: openDialoge(e,id,department,reason))
+                                ft.IconButton(icon= ft.icons.INFO,icon_color=ft.colors.WHITE, on_click= lambda e: openDialoge(e,id,department,reason,isGuest,guestname,guestMobileNum))
                             ],
                             alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                             ),
@@ -234,7 +252,7 @@ def ApproveRequest(page: ft.page):
                                 expand=True,
                                 bgcolor=ft.colors.RED_900,
                                 color=ft.colors.WHITE70,
-                                on_click=lambda e: showFinalApprovePopUp(e,reqId,id2)
+                                on_click=lambda e: showFinalApprovePopUp(e,reqId,id2,vechType)
 
                             ),
                                 ft.Container(width=10),
@@ -243,7 +261,7 @@ def ApproveRequest(page: ft.page):
                                 expand =True,
                                 bgcolor=ft.colors.GREEN_900,
                                 color=ft.colors.WHITE70,
-                                on_click= lambda e:showFinalApprovePopUp(e,reqId,id1)
+                                on_click= lambda e:showFinalApprovePopUp(e,reqId,id1,vechType)
                                 ),
                                 ft.Container(width=20)
                             ],
@@ -260,23 +278,73 @@ def ApproveRequest(page: ft.page):
     reqData = ft.ListView(spacing=10)
     if allRequests != [] and allRequests != None:
         for res in allRequests:
-            if not res["tripStatus"]:
-                if not res["tripCanceled"]:
-                    startTime = res["startTime"]
-                    endTime = res["endTime"]
-                    reqData.controls.append(requestCard(
-                        reqId= res["bookingNumber"],
-                        reqBy = res["empUsername"], 
-                        origin = res["startLocation"],
-                        destination= res["destination"],
-                        start= timeTxt[startTime],
-                        end= timeTxt[endTime],
-                        date= res["tripDate"],
-                        id =res["empId"],
-                        department= res["userDepartment"],
-                        reason= res["reason"],
-                        
-                    ))
+            if currentUser["isOwner"] and not currentUser["isAdmin"]:
+                if not res["tripStatus"] and res["vehicleType"] == currentUser["department"]:
+                    if not res["tripCanceled"]:
+                        startTime = res["startTime"]
+                        endTime = res["endTime"]
+                        reqData.controls.append(requestCard(
+                            reqId= res["bookingNumber"],
+                            reqBy = res["empUsername"], 
+                            origin = res["startLocation"],
+                            destination= res["destination"],
+                            start= timeTxt[startTime],
+                            end= timeTxt[endTime],
+                            date= res["tripDate"],
+                            id =res["empId"],
+                            department= res["userDepartment"],
+                            reason= res["reason"],
+                            isGuest= res["isGuestBooking"],
+                            guestname= res["guestName"],
+                            guestMobileNum= res["guestMobileNumber"],
+                            vechType= res["vehicleType"],
+                            
+                        ))
+            elif currentUser["isOwner"] and  currentUser["isAdmin"]:
+                tb = ["ADMIN",currentUser["department"]]
+                if not res["tripStatus"] and res["vehicleType"] in tb:
+                    if not res["tripCanceled"]:
+                        startTime = res["startTime"]
+                        endTime = res["endTime"]
+                        reqData.controls.append(requestCard(
+                            reqId= res["bookingNumber"],
+                            reqBy = res["empUsername"], 
+                            origin = res["startLocation"],
+                            destination= res["destination"],
+                            start= timeTxt[startTime],
+                            end= timeTxt[endTime],
+                            date= res["tripDate"],
+                            id =res["empId"],
+                            department= res["userDepartment"],
+                            reason= res["reason"],
+                            isGuest= res["isGuestBooking"],
+                            guestname= res["guestName"],
+                            guestMobileNum= res["guestMobileNumber"],
+                            vechType= res["vehicleType"],
+                            
+                        ))
+            elif currentUser["isAdmin"]:
+                if not res["tripStatus"] and res["vehicleType"] == "ADMIN":
+                    if not res["tripCanceled"]:
+                        startTime = res["startTime"]
+                        endTime = res["endTime"]
+                        reqData.controls.append(requestCard(
+                            reqId= res["bookingNumber"],
+                            reqBy = res["empUsername"], 
+                            origin = res["startLocation"],
+                            destination= res["destination"],
+                            start= timeTxt[startTime],
+                            end= timeTxt[endTime],
+                            date= res["tripDate"],
+                            id =res["empId"],
+                            department= res["userDepartment"],
+                            reason= res["reason"],
+                            isGuest= res["isGuestBooking"],
+                            guestname= res["guestName"],
+                            guestMobileNum= res["guestMobileNumber"],
+                            vechType= res["vehicleType"],
+                            
+                        ))
     else:
         reqData = ft.Container(padding = 30,content=ft.Text("No Requests Found",
                                         size=50,
