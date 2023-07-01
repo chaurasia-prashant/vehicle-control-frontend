@@ -2,6 +2,7 @@ import datetime
 import json
 import time
 import flet as ft
+import openpyxl
 import requests
 from database.getFromDb import getAllBookkingRequest, getAllVehicles
 from database.staticData import secondsToTime
@@ -57,8 +58,51 @@ def AdminControlPage(page: ft.page):
         date_str = start_date.strftime('%m-%Y')
         moy.options.append(ft.dropdown.Option(date_str))
         start_date = start_date - datetime.timedelta(days=31)
-
-    def getBookingDump(e):
+    
+    def getBookingsResultInExcle(data):
+            workbook = openpyxl.Workbook()
+            worksheet = workbook.active
+            vehicleRow = 1
+            bookingsRow = 1
+            # worksheet.cell(row=1, column=1, value="Date-Year")
+            worksheet.cell(row=1, column=1, value="Vehicle Number")
+            worksheet.cell(row=1, column=2, value="Booking Date")
+            worksheet.cell(row=1, column=3, value="Booking Detail")
+            dat = list(data.keys())
+            dat = dat[0]
+            data = data[dat]
+            vehicleRow = 2
+            dateRow = 2
+            bookingsRow=2
+            for i in data:
+                worksheet.cell(row=vehicleRow, column=1, value=i)
+                for j in data[i]:
+                    worksheet.cell(row=dateRow, column=2, value=j)
+                    for k in data[i][j]:
+                        val = data[i][j][k]
+                        worksheet.cell(row=dateRow, column=3, value=f"From {val[0]} To {val[1]}")
+                        # worksheet.cell(row=dateRow, column=3, value=f"From {val[0]} To {val[1]} BY {val[2]}")
+                        bookingsRow +=1
+                    dateRow +=1
+                vehicleRow +=1
+            try:
+                # to save in android
+                workbook.save(f"/storage/emulated/0/Download/{dat} bookings.xlsx")
+            except :
+                pass
+            try:
+                # to save in macos
+                workbook.save(f"/Users/Username/Downloads/{dat} bookings.xlsx")
+            except :
+                pass
+            try:
+                # to save in windows
+                workbook.save(f"C:\\Users\\code01\\Desktop\\bookings\\{dat} bookings.xlsx")
+            except :
+                pass
+            
+            
+    def getBookingDumpResult(e):
         try:
             url = urls()
             requests.post(url["backupBooking"])
@@ -68,7 +112,11 @@ def AdminControlPage(page: ft.page):
             res = requests.post(url["getBookingDump"], json=data)
             resdata = json.loads(res.content)
             if res.status_code == 200 and resdata[0] == 200:
-                # print(resdata[1])
+                bookingData = resdata[1]
+                bookingData = {moy.value : json.loads(bookingData["bookedTime"])}
+                # print(bookingData)
+                getBookingsResultInExcle(bookingData)
+                # print("bookingsSaved")
                 close_dlg(e)
             else:
                 close_dlg(e)
@@ -77,6 +125,7 @@ def AdminControlPage(page: ft.page):
                 show_banner_click(e)
 
         except Exception as e:
+            print(e)
             close_dlg(e)
             message.value = "Something went wrong! Try again."
             message.update()
@@ -88,7 +137,7 @@ def AdminControlPage(page: ft.page):
         content=moy,
         actions=[
             ft.TextButton("Cancel", on_click=close_dlg),
-            ft.TextButton("Get Backup", on_click=getBookingDump),
+            ft.TextButton("Get Backup", on_click=getBookingDumpResult),
         ],
         actions_alignment=ft.MainAxisAlignment.END,
     )

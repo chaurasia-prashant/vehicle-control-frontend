@@ -105,7 +105,7 @@ def BookingRequest(page: ft.page):
         )
     
     ishavedepartmentvehicle = False
-    if userData["department"] in ["Imd","CMD","CLD"]:
+    if userData["department"] in ["IMD","CMD","CLD"]:
         ishavedepartmentvehicle = True
     isDepartmentVehicle = ft.Checkbox(
         visible= ishavedepartmentvehicle,
